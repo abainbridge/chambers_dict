@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\..\deadfrog-lib\src\df_bitmap.cpp">
+      <Filter>deadfrog-lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\deadfrog-lib\src\df_clipboard.cpp">
+      <Filter>deadfrog-lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\deadfrog-lib\src\df_colour.cpp">
+      <Filter>deadfrog-lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\deadfrog-lib\src\df_common.cpp">
+      <Filter>deadfrog-lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\deadfrog-lib\src\df_font.cpp">
+      <Filter>deadfrog-lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\deadfrog-lib\src\df_message_dialog.cpp">
+      <Filter>deadfrog-lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\deadfrog-lib\src\df_polygon_aa.cpp">
+      <Filter>deadfrog-lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\deadfrog-lib\src\df_time.cpp">
+      <Filter>deadfrog-lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\deadfrog-lib\src\df_window.cpp">
+      <Filter>deadfrog-lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\dict.cpp" />
+    <ClCompile Include="..\..\src\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\deadfrog-lib\src\df_bitmap.h">
+      <Filter>deadfrog-lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\deadfrog-lib\src\df_clipboard.h">
+      <Filter>deadfrog-lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\deadfrog-lib\src\df_colour.h">
+      <Filter>deadfrog-lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\deadfrog-lib\src\df_common.h">
+      <Filter>deadfrog-lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\deadfrog-lib\src\df_font.h">
+      <Filter>deadfrog-lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\deadfrog-lib\src\df_message_dialog.h">
+      <Filter>deadfrog-lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\deadfrog-lib\src\df_polygon_aa.h">
+      <Filter>deadfrog-lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\deadfrog-lib\src\df_time.h">
+      <Filter>deadfrog-lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\deadfrog-lib\src\df_window.h">
+      <Filter>deadfrog-lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\deadfrog-lib\src\fonts\df_prop.h">
+      <Filter>deadfrog-lib\fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\dict.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="deadfrog-lib">
+      <UniqueIdentifier>{99c4306a-4161-4e60-86e7-9cbbcf482d1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="deadfrog-lib\fonts">
+      <UniqueIdentifier>{df0a049b-f243-4323-9ef5-9c10e22ddaab}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
