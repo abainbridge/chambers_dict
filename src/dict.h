@@ -8,7 +8,7 @@ typedef struct {
 
 
 typedef struct {
-    char **defs;
+    char **defs;    // Array of pointers to NULL terminated strings.
     unsigned num_defs;
 
     word_def_idx_t *word_def_indices;

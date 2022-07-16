@@ -114,6 +114,7 @@
     <ClInclude Include="..\..\..\deadfrog-lib\src\df_window.h" />
     <ClInclude Include="..\..\..\deadfrog-lib\src\fonts\df_prop.h" />
     <ClInclude Include="..\..\src\dict.h" />
+    <ClInclude Include="..\..\src\gui.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

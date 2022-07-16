@@ -63,6 +63,7 @@
       <Filter>deadfrog-lib\fonts</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\dict.h" />
+    <ClInclude Include="..\..\src\gui.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="deadfrog-lib">
