@@ -57,10 +57,24 @@ typedef struct {
 
 // Returns id of item that was selected, or -1 if none were.
 int list_view_do(DfWindow *win, list_view_t *lv, int x, int y, int w, int h) {
-    if (win->input.keyDowns[KEY_DOWN] && lv->selected_item < lv->num_items)
+    const int num_rows = h / g_defaultFont->charHeight;
+
+    if (win->input.keyDowns[KEY_DOWN])
         lv->selected_item++;
-    else if (win->input.keyDowns[KEY_UP] && lv->selected_item > 0)
+    else if (win->input.keyDowns[KEY_UP])
         lv->selected_item--;
+    else if (win->input.keyDowns[KEY_PGDN])
+        lv->selected_item += num_rows;
+    else if (win->input.keyDowns[KEY_PGUP])
+        lv->selected_item -= num_rows;
+
+    if (lv->selected_item >= lv->num_items)
+        lv->selected_item = lv->num_items - 1;
+    else if (lv->selected_item < 0)
+        lv->selected_item = 0;
+
+    int first_display_item = lv->selected_item - num_rows / 2;
+    first_display_item = ClampInt(first_display_item, 0, lv->num_items - num_rows / 2);
 
     draw_raised_box(win->bmp, x, y, w, h);
     x += 2 * g_drawScale;
@@ -70,7 +84,7 @@ int list_view_do(DfWindow *win, list_view_t *lv, int x, int y, int w, int h) {
     SetClipRect(win->bmp, x, y, w, h);
 
     int last_y = y + h;
-    for (unsigned i = 0; i < lv->num_items; i++) {
+    for (unsigned i = first_display_item; i < lv->num_items; i++) {
         if (y > last_y) break;
 
         if (i == lv->selected_item) {

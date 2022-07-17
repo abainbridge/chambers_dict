@@ -41,16 +41,22 @@ void main() {
     while (!win->windowClosed && !win->input.keyDowns[KEY_ESC]) {
         InputPoll(win);
 
-        BitmapClear(win->bmp, g_backgroundColour);
-        DrawTextSimple(g_defaultFont, g_normalTextColour, win->bmp, 10, 10, "Hello");
+        int spacer = 10 * g_drawScale;
+        int text_view_x = win->bmp->width * 0.3;
+        int views_y = 30;
+        int text_view_width = win->bmp->width - text_view_x - spacer;
+        int views_height = win->bmp->height - views_y - spacer;
 
-        list_view_do(win, &list_view, 10, 30, 300, 560);
+        BitmapClear(win->bmp, g_backgroundColour);
+        DrawTextSimple(g_defaultFont, g_normalTextColour, win->bmp, spacer, spacer, "Hello");
+
+        list_view_do(win, &list_view, spacer, views_y, text_view_x - spacer * 2, views_height);
         int word_def_idx = dict_get_word_def_idx(&dict, list_view.items[list_view.selected_item]);
         if (word_def_idx >= 0) {
             text_view.text = dict_get_clean_def_text(&dict, word_def_idx);
         }
 
-        text_view_do(win, &text_view, 320, 30, 470, 560);
+        text_view_do(win, &text_view, text_view_x, views_y, text_view_width, views_height);
 
         UpdateWin(win);
         WaitVsync();
