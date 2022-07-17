@@ -8,17 +8,43 @@
 #include "gui.h"
 
 // Standard headers
+#include <ctype.h>
 #include <stdlib.h>
 
 static const char APPLICATION_NAME[] = "21st Century Dictionary";
 
 
+// Returns 1 on match, 0 otherwise.
+int wildcard_match(char const *haystack, char const *needle) {
+    while (*haystack) {
+        if (*needle == '\0')
+            return 1;
+
+        if (*needle == '*') {
+            unsigned remaining_needle_len = strlen(needle);
+            for (int i = 1; i < remaining_needle_len; i++) {
+                if (wildcard_match(haystack + i, needle + 1))
+                    return 1;
+            }
+        }
+        else if (tolower(*haystack) != tolower(*needle) && *needle != '?')
+            return 0;
+
+        haystack++;
+        needle++;
+    }
+
+    return *haystack == *needle;
+}
+
+
 void populate_list_view(list_view_t *lv, dict_t *dict, char const *filter) {
     lv->num_items = 0;
 
+    unsigned filter_len = strlen(filter);
     for (unsigned i = 0; i < dict->num_word_def_indices; i++) {
         char const *word = dict->word_def_indices[i].word;
-        if (strstr(word, filter)) {
+        if (wildcard_match(word, filter)) {
             lv->items[lv->num_items] = word;
             lv->num_items++;
         }
