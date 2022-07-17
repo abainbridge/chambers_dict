@@ -50,14 +50,14 @@ void draw_raised_box(DfBitmap *bmp, int x, int y, int w, int h) {
 // ****************************************************************************
 
 typedef struct {
-    char text[4];
+    char text[128];
     double nextCursorToggleTime;
     char cursorOn;
     int cursorIdx;
 } edit_box_t;
 
 
-// Returns 1 if enter pressed.
+// Returns 1 if contents changed.
 int edit_box_do(DfWindow *win, edit_box_t *eb, int x, int y, int w, int h) {
     draw_raised_box(win->bmp, x, y, w, h);
     x += 2 * g_drawScale;
@@ -89,6 +89,7 @@ int edit_box_do(DfWindow *win, edit_box_t *eb, int x, int y, int w, int h) {
         eb->nextCursorToggleTime = now;
     }
 
+    int contents_changed = 0;
     for (int i = 0; i < win->input.numKeysTyped; i++) {
         char c = win->input.keysTyped[i];
         if (c == 8) { // Backspace
@@ -115,6 +116,7 @@ int edit_box_do(DfWindow *win, edit_box_t *eb, int x, int y, int w, int h) {
             eb->cursorIdx = IntMin(eb->cursorIdx + 1, sizeof(eb->text) - 1);
         }
 
+        contents_changed = 1;
         eb->nextCursorToggleTime = now;
     }
 
@@ -127,7 +129,7 @@ int edit_box_do(DfWindow *win, edit_box_t *eb, int x, int y, int w, int h) {
     
     ClearClipRect(win->bmp);
 
-    return 0;
+    return contents_changed;
 }
 
 

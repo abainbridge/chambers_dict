@@ -13,6 +13,19 @@
 static const char APPLICATION_NAME[] = "21st Century Dictionary";
 
 
+void populate_list_view(list_view_t *lv, dict_t *dict, char const *filter) {
+    lv->num_items = 0;
+
+    for (unsigned i = 0; i < dict->num_word_def_indices; i++) {
+        char const *word = dict->word_def_indices[i].word;
+        if (strstr(word, filter)) {
+            lv->items[lv->num_items] = word;
+            lv->num_items++;
+        }
+    }
+}
+
+
 void main() {
     DfWindow *win = CreateWin(800, 600, WT_WINDOWED_RESIZEABLE, APPLICATION_NAME);
     g_defaultFont = LoadFontFromMemory(df_prop_7x13, sizeof(df_prop_7x13));
@@ -28,10 +41,7 @@ void main() {
 
     list_view_t list_view = { 0 };
     list_view.items = (const char **)malloc(sizeof(const char **) * dict.num_word_def_indices);
-    for (unsigned i = 0; i < dict.num_word_def_indices; i++) {
-        list_view.items[i] = dict.word_def_indices[i].word;
-    }
-    list_view.num_items = dict.num_word_def_indices;
+    populate_list_view(&list_view, &dict, edit_box.text);
 
     text_view_t text_view;
     text_view.text = "";
@@ -54,13 +64,13 @@ void main() {
 
         BitmapClear(win->bmp, g_backgroundColour);
 
-        edit_box_do(win, &edit_box, spacer, edit_box_y, list_view_width, edit_box_height);
+        if (edit_box_do(win, &edit_box, spacer, edit_box_y, list_view_width, edit_box_height))
+            populate_list_view(&list_view, &dict, edit_box.text);
 
         list_view_do(win, &list_view, spacer, views_y, list_view_width, views_height);
         int word_def_idx = dict_get_word_def_idx(&dict, list_view.items[list_view.selected_item]);
-        if (word_def_idx >= 0) {
+        if (word_def_idx >= 0)
             text_view.text = dict_get_clean_def_text(&dict, word_def_idx);
-        }
 
         text_view_do(win, &text_view, text_view_x, views_y, text_view_width, views_height);
 
