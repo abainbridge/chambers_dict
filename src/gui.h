@@ -2,6 +2,7 @@
 
 // Deadfrog lib headers.
 #include "df_bitmap.h"
+#include "df_time.h"
 #include "df_window.h"
 
 // Standard headers.
@@ -41,6 +42,92 @@ void draw_raised_box(DfBitmap *bmp, int x, int y, int w, int h) {
     RectFill(bmp, x, y + h - thickness, w, thickness, dark); // '2' pixels
     RectFill(bmp, x, y + thickness, thickness, h - 2 * thickness, light);
     RectFill(bmp, x + w - thickness, y + thickness, thickness, h - 2 * thickness, dark);
+}
+
+
+// ****************************************************************************
+// Edit box
+// ****************************************************************************
+
+typedef struct {
+    char text[4];
+    double nextCursorToggleTime;
+    char cursorOn;
+    int cursorIdx;
+} edit_box_t;
+
+
+// Returns 1 if enter pressed.
+int edit_box_do(DfWindow *win, edit_box_t *eb, int x, int y, int w, int h) {
+    draw_raised_box(win->bmp, x, y, w, h);
+    x += 2 * g_drawScale;
+    y += 4 * g_drawScale;
+    w -= 4 * g_drawScale;
+    h -= 8 * g_drawScale;
+    SetClipRect(win->bmp, x, y, w, h);
+       
+    double now = GetRealTime();
+    if (now > eb->nextCursorToggleTime) {
+        eb->cursorOn = !eb->cursorOn;
+        eb->nextCursorToggleTime = now + 0.5;
+    }
+
+    if (win->input.keyDowns[KEY_LEFT]) {
+        eb->cursorIdx = IntMax(0, eb->cursorIdx - 1);
+        eb->nextCursorToggleTime = now;
+    }
+    else if (win->input.keyDowns[KEY_RIGHT]) {
+        eb->cursorIdx = IntMin(strlen(eb->text), eb->cursorIdx + 1);
+        eb->nextCursorToggleTime = now;
+    }
+    else if (win->input.keyDowns[KEY_HOME]) {
+        eb->cursorIdx = 0;
+        eb->nextCursorToggleTime = now;
+    }
+    else if (win->input.keyDowns[KEY_END]) {
+        eb->cursorIdx = strlen(eb->text);
+        eb->nextCursorToggleTime = now;
+    }
+
+    for (int i = 0; i < win->input.numKeysTyped; i++) {
+        char c = win->input.keysTyped[i];
+        if (c == 8) { // Backspace
+            if (eb->cursorIdx > 0) {
+                char *move_src = eb->text + eb->cursorIdx;
+                unsigned move_size = strlen(move_src);
+                memmove(move_src - 1, move_src, move_size);
+                move_src[move_size - 1] = '\0';
+                eb->cursorIdx--;
+            }
+        }
+        else if (c == 127) { // Delete
+            char *move_src = eb->text + eb->cursorIdx + 1;
+            unsigned move_size = strlen(move_src);
+            memmove(move_src - 1, move_src, move_size);
+            move_src[move_size - 1] = '\0';
+        }
+        else {
+            char *move_src = eb->text + eb->cursorIdx;
+            unsigned move_size = strlen(move_src);
+            memmove(move_src + 1, move_src, move_size);
+            eb->text[eb->cursorIdx] = c;
+            eb->text[sizeof(eb->text) - 1] = '\0';
+            eb->cursorIdx = IntMin(eb->cursorIdx + 1, sizeof(eb->text) - 1);
+        }
+
+        eb->nextCursorToggleTime = now;
+    }
+
+    DrawTextSimple(g_defaultFont, g_normalTextColour, win->bmp, x, y, eb->text);
+
+    if (eb->cursorOn) {
+        int cursorX = GetTextWidth(g_defaultFont, eb->text, eb->cursorIdx) + x;
+        RectFill(win->bmp, cursorX, y, 2 * g_drawScale, g_defaultFont->charHeight, g_normalTextColour);
+    }
+    
+    ClearClipRect(win->bmp);
+
+    return 0;
 }
 
 

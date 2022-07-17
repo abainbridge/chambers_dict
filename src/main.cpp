@@ -24,6 +24,8 @@ void main() {
     //
     // Init GUI widgets
 
+    edit_box_t edit_box = { 0 };
+
     list_view_t list_view = { 0 };
     list_view.items = (const char **)malloc(sizeof(const char **) * dict.num_word_def_indices);
     for (unsigned i = 0; i < dict.num_word_def_indices; i++) {
@@ -42,15 +44,19 @@ void main() {
         InputPoll(win);
 
         int spacer = 10 * g_drawScale;
+        int edit_box_y = spacer;
+        int edit_box_height = g_defaultFont->charHeight + 8 * g_drawScale;
         int text_view_x = win->bmp->width * 0.3;
-        int views_y = 30;
+        int views_y = edit_box_y + edit_box_height + spacer;
         int text_view_width = win->bmp->width - text_view_x - spacer;
         int views_height = win->bmp->height - views_y - spacer;
+        int list_view_width = text_view_x - spacer * 2;
 
         BitmapClear(win->bmp, g_backgroundColour);
-        DrawTextSimple(g_defaultFont, g_normalTextColour, win->bmp, spacer, spacer, "Hello");
 
-        list_view_do(win, &list_view, spacer, views_y, text_view_x - spacer * 2, views_height);
+        edit_box_do(win, &edit_box, spacer, edit_box_y, list_view_width, edit_box_height);
+
+        list_view_do(win, &list_view, spacer, views_y, list_view_width, views_height);
         int word_def_idx = dict_get_word_def_idx(&dict, list_view.items[list_view.selected_item]);
         if (word_def_idx >= 0) {
             text_view.text = dict_get_clean_def_text(&dict, word_def_idx);
