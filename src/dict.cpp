@@ -125,17 +125,19 @@ char const *dict_get_clean_def_text(dict_t *dict, unsigned idx) {
 
     unsigned out_pos = 0;
     while (*c != '\0') {
-        if (starts_with(c, "</LV0>") || starts_with(c, "</POS>")) {
+        if (starts_with(c, "</LV0>") ||
+            starts_with(c, "</LV2>") ||
+            starts_with(c, "</LV3>") ||
+            starts_with(c, "</LV4>") ||
+            starts_with(c, "</LV5>")) {
             buf[out_pos] = '\n';
             out_pos++;
             c += 6;
         }
-        else if (starts_with(c, "</LV2>")) {
+        if (starts_with(c, "<LV2>")) {
             buf[out_pos] = '\n';
             out_pos++;
-            buf[out_pos] = '\n';
-            out_pos++;
-            c += 6;
+            c += 5;
         }
         else if (*c == '<') {
             while (*c != '>') c++;
