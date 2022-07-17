@@ -139,8 +139,8 @@ int edit_box_do(DfWindow *win, edit_box_t *eb, int x, int y, int w, int h) {
 
 typedef struct {
     char const **items;
-    unsigned num_items;
-    unsigned selected_item;
+    int num_items;
+    int selected_item;
 } list_view_t;
 
 
