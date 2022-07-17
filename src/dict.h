@@ -17,3 +17,5 @@ typedef struct {
 
 
 int dict_load(dict_t *dict, char const *filename);
+int dict_get_word_def_idx(dict_t *dict, char const *word);
+char const *dict_get_clean_def_text(dict_t *dict, unsigned idx);

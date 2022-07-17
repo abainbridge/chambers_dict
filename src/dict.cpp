@@ -5,6 +5,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 
 static char *g_dictFile;
@@ -83,4 +84,70 @@ int dict_load(dict_t *dict, char const *filename) {
     }
 
     return 1;
+}
+
+
+int dict_get_word_def_idx(dict_t *dict, char const *word) {
+    for (unsigned i = 0; i < dict->num_word_def_indices; i++) {
+        if (strcmp(dict->word_def_indices[i].word, word) == 0) {
+            return dict->word_def_indices[i].idx;
+        }
+    }
+
+    return -1;
+}
+
+
+static int starts_with(char const *haystack, char const *needle) {
+    while (*haystack != '\0') {
+        if (*needle == '\0')
+            return 1;
+        if (*haystack != *needle)
+            return 0;
+        haystack++;
+        needle++;
+    }
+
+    return 0;
+}
+
+
+char const *dict_get_clean_def_text(dict_t *dict, unsigned idx) {
+    static unsigned buf_len = 32768;
+    static char *buf = (char *)malloc(buf_len);
+    
+    char *c = dict->defs[idx];
+    if (strlen(c) > buf_len) {
+        free(buf);
+        buf_len *= 1.5;
+        buf = (char *)malloc(buf_len);
+    }
+
+    unsigned out_pos = 0;
+    while (*c != '\0') {
+        if (starts_with(c, "</LV0>") || starts_with(c, "</POS>")) {
+            buf[out_pos] = '\n';
+            out_pos++;
+            c += 6;
+        }
+        else if (starts_with(c, "</LV2>")) {
+            buf[out_pos] = '\n';
+            out_pos++;
+            buf[out_pos] = '\n';
+            out_pos++;
+            c += 6;
+        }
+        else if (*c == '<') {
+            while (*c != '>') c++;
+            c++;
+        }
+        else {
+            buf[out_pos] = *c;
+            out_pos++;
+            c++;
+        }
+    }
+
+    buf[out_pos] = '\0';
+    return buf;
 }
