@@ -157,7 +157,7 @@ int list_view_do(DfWindow *win, list_view_t *lv, int x, int y, int w, int h) {
     else if (win->input.keyDowns[KEY_PGUP])
         lv->selected_item -= num_rows;
 
-    if (lv->selected_item >= lv->num_items)
+    if (lv->selected_item >= lv->num_items || lv->num_items <= 0)
         lv->selected_item = lv->num_items - 1;
     else if (lv->selected_item < 0)
         lv->selected_item = 0;
@@ -173,7 +173,7 @@ int list_view_do(DfWindow *win, list_view_t *lv, int x, int y, int w, int h) {
     SetClipRect(win->bmp, x, y, w, h);
 
     int last_y = y + h;
-    for (unsigned i = first_display_item; i < lv->num_items; i++) {
+    for (int i = first_display_item; i < lv->num_items; i++) {
         if (y > last_y) break;
 
         if (i == lv->selected_item) {

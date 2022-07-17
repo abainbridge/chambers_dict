@@ -68,9 +68,14 @@ void main() {
             populate_list_view(&list_view, &dict, edit_box.text);
 
         list_view_do(win, &list_view, spacer, views_y, list_view_width, views_height);
-        int word_def_idx = dict_get_word_def_idx(&dict, list_view.items[list_view.selected_item]);
-        if (word_def_idx >= 0)
-            text_view.text = dict_get_clean_def_text(&dict, word_def_idx);
+        if (list_view.selected_item >= 0) {
+            int word_def_idx = dict_get_word_def_idx(&dict, list_view.items[list_view.selected_item]);
+            if (word_def_idx >= 0)
+                text_view.text = dict_get_clean_def_text(&dict, word_def_idx);
+        }
+        else {
+            text_view.text = "";
+        }
 
         text_view_do(win, &text_view, text_view_x, views_y, text_view_width, views_height);
 
