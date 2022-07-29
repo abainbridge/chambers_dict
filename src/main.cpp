@@ -22,7 +22,7 @@ int wildcard_match(char const *haystack, char const *needle) {
 
         if (*needle == '*') {
             unsigned remaining_needle_len = strlen(needle);
-            for (int i = 1; i < remaining_needle_len; i++) {
+            for (unsigned i = 1; i < remaining_needle_len; i++) {
                 if (wildcard_match(haystack + i, needle + 1))
                     return 1;
             }
@@ -42,8 +42,8 @@ void populate_list_view(list_view_t *lv, dict_t *dict, char const *filter) {
     lv->num_items = 0;
 
     unsigned filter_len = strlen(filter);
-    for (unsigned i = 0; i < dict->num_word_def_indices; i++) {
-        char const *word = dict->word_def_indices[i].word;
+    for (unsigned i = 0; i < dict->num_def_indices; i++) {
+        char const *word = dict->def_indices[i].word;
         if (wildcard_match(word, filter)) {
             lv->items[lv->num_items] = word;
             lv->num_items++;
@@ -66,7 +66,7 @@ void main() {
     edit_box_t edit_box = { 0 };
 
     list_view_t list_view = { 0 };
-    list_view.items = (const char **)malloc(sizeof(const char **) * dict.num_word_def_indices);
+    list_view.items = (const char **)malloc(sizeof(const char **) * dict.num_def_indices);
     populate_list_view(&list_view, &dict, edit_box.text);
 
     text_view_t text_view;
@@ -95,7 +95,7 @@ void main() {
 
         list_view_do(win, &list_view, spacer, views_y, list_view_width, views_height);
         if (list_view.selected_item >= 0) {
-            int word_def_idx = dict_get_word_def_idx(&dict, list_view.items[list_view.selected_item]);
+            int word_def_idx = dict_get_def_idx(&dict, list_view.items[list_view.selected_item]);
             if (word_def_idx >= 0)
                 text_view.text = dict_get_clean_def_text(&dict, word_def_idx);
         }

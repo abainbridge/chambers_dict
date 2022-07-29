@@ -12,6 +12,10 @@ static char *g_dictFile;
 static unsigned g_dictFileNumBytes;
 
 
+static int is_hex_digit(char c) {
+    return strchr("0123456789abcdef", c) != NULL;
+}
+
 static char *seek_to_newline(char *s) {
     while (*s != '\n') {
         s++;
@@ -22,20 +26,19 @@ static char *seek_to_newline(char *s) {
 
 
 int dict_load(dict_t *dict, char const *filename) {
+    // Read the entire file into memory.
     FILE *in = fopen(filename, "r");
     if (!in) return 0;
-
     fseek(in, 0, SEEK_END); 
     g_dictFileNumBytes = ftell(in);
-
     fseek(in, 0, SEEK_SET);
-
     g_dictFile = (char *)malloc(g_dictFileNumBytes);
     unsigned bytesRead = fread(g_dictFile, 1, g_dictFileNumBytes, in);
     if (bytesRead != g_dictFileNumBytes)
         return 0;
+    fclose(in);
 
-    // Count num definitions.
+    // Count definitions.
     dict->num_defs = 0;
     for (unsigned i = 0; i < g_dictFileNumBytes - 1; i++) {
         if (g_dictFile[i] == '\n') {
@@ -54,31 +57,31 @@ int dict_load(dict_t *dict, char const *filename) {
         c++;
     }
 
-    // Count num words.
-    dict->num_word_def_indices = 0;
+    // Count words.
+    dict->num_def_indices = 0;
     for (unsigned i = c - g_dictFile; i < g_dictFileNumBytes; i++) {
         if (g_dictFile[i] == '\n') {
-            dict->num_word_def_indices++;
+            dict->num_def_indices++;
         }
     }
 
-    dict->word_def_indices = (word_def_idx_t *)malloc(sizeof(word_def_idx_t) * 
-                                                      dict->num_word_def_indices);
+    dict->def_indices = (def_idx_t *)malloc(sizeof(def_idx_t) * 
+                                                      dict->num_def_indices);
 
-    // Read indices of definitions for each word.
-    for (unsigned i = 0; i < dict->num_word_def_indices; i++) {
+    // Read definition indices.
+    for (unsigned i = 0; i < dict->num_def_indices; i++) {
         char *end_of_line = seek_to_newline(c);
         char *index_str = end_of_line;
-        while (isdigit(index_str[-1])) {
+        while (is_hex_digit(index_str[-1])) {
             index_str--;
         }
 
-        dict->word_def_indices[i].idx = strtoul(index_str, NULL, 10);
+        dict->def_indices[i].idx = strtoul(index_str, NULL, 16);
 
         index_str--;
         ReleaseAssert(*index_str == ' ', "Missing space in dict");
         *index_str = '\0';
-        dict->word_def_indices[i].word = c;
+        dict->def_indices[i].word = c;
 
         c = end_of_line + 1;
     }
@@ -87,10 +90,10 @@ int dict_load(dict_t *dict, char const *filename) {
 }
 
 
-int dict_get_word_def_idx(dict_t *dict, char const *word) {
-    for (unsigned i = 0; i < dict->num_word_def_indices; i++) {
-        if (strcmp(dict->word_def_indices[i].word, word) == 0) {
-            return dict->word_def_indices[i].idx;
+int dict_get_def_idx(dict_t *dict, char const *word) {
+    for (unsigned i = 0; i < dict->num_def_indices; i++) {
+        if (strcmp(dict->def_indices[i].word, word) == 0) {
+            return dict->def_indices[i].idx;
         }
     }
 
