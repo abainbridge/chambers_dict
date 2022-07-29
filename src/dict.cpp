@@ -80,6 +80,7 @@ int dict_get_def_indices(dict_t *dict, char const *word, int indices[6]) {
                     return j + 1;
                 }
                 ReleaseAssert(*c == ':', "Bad word line");
+                c++;
             }
         }
     }

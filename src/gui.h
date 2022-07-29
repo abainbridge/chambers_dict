@@ -195,14 +195,30 @@ int list_view_do(DfWindow *win, list_view_t *lv, int x, int y, int w, int h) {
 // Text View
 // ****************************************************************************
 
-enum { TEXT_VIEW_MAX_LINES = 200 };
+enum { TEXT_VIEW_MAX_CHARS = 95000 };
 
 typedef struct {
-    char const *text;
+    char text[TEXT_VIEW_MAX_CHARS];
 } text_view_t;
 
 
-static int render_word(char const *word, unsigned *chars_consumed) {
+void text_view_init(text_view_t *tv) {
+    tv->text[0] = '\0';
+}
+
+
+void text_view_empty(text_view_t *tv) {
+    text_view_init(tv);
+}
+
+
+void text_view_add_text(text_view_t *tv, char const *text) {
+    int current_len = strlen(tv->text);
+    int additional_len = strlen(text);
+    int space = TEXT_VIEW_MAX_CHARS - current_len - 1;
+    int amt_to_copy = IntMin(space, additional_len);
+    memcpy(tv->text + current_len, text, amt_to_copy);
+    tv->text[current_len + amt_to_copy] = '\0';
 }
 
 
