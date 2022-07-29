@@ -42,8 +42,8 @@ void populate_list_view(list_view_t *lv, dict_t *dict, char const *filter) {
     lv->num_items = 0;
 
     unsigned filter_len = strlen(filter);
-    for (unsigned i = 0; i < dict->num_def_indices; i++) {
-        char const *word = dict->def_indices[i].word;
+    for (unsigned i = 0; i < dict->num_words; i++) {
+        char const *word = dict->words[i];
         if (wildcard_match(word, filter)) {
             lv->items[lv->num_items] = word;
             lv->num_items++;
@@ -66,7 +66,7 @@ void main() {
     edit_box_t edit_box = { 0 };
 
     list_view_t list_view = { 0 };
-    list_view.items = (const char **)malloc(sizeof(const char **) * dict.num_def_indices);
+    list_view.items = (const char **)malloc(sizeof(const char **) * dict.num_words);
     populate_list_view(&list_view, &dict, edit_box.text);
 
     text_view_t text_view;
@@ -95,9 +95,10 @@ void main() {
 
         list_view_do(win, &list_view, spacer, views_y, list_view_width, views_height);
         if (list_view.selected_item >= 0) {
-            int word_def_idx = dict_get_def_idx(&dict, list_view.items[list_view.selected_item]);
-            if (word_def_idx >= 0)
-                text_view.text = dict_get_clean_def_text(&dict, word_def_idx);
+            int def_indices[6];
+            int num_defs = dict_get_def_indices(&dict, list_view.items[list_view.selected_item], def_indices);
+            if (num_defs > 0)
+                text_view.text = dict_get_clean_def_text(&dict, def_indices[0]);
         }
         else {
             text_view.text = "";
