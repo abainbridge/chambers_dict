@@ -18,6 +18,19 @@ DfColour g_selectionColour = Colour(21, 79, 255);
 double g_drawScale = 1.0;
 
 
+void HandleDrawScaleChange(DfWindow *win) {
+    if (win->input.keys[KEY_CONTROL]) {
+        if (win->input.keyDowns[KEY_EQUALS] || win->input.keyDowns[KEY_PLUS_PAD]) {
+            g_drawScale *= 1.1;
+        }
+        else if (win->input.keyDowns[KEY_MINUS] || win->input.keyDowns[KEY_MINUS_PAD]) {
+            g_drawScale /= 1.1;
+        }
+
+        g_drawScale = ClampDouble(g_drawScale, 0.7, 3.0);
+    }
+}
+
 
 void draw_raised_box(DfBitmap *bmp, int x, int y, int w, int h) {
     // The specified w and h is the external size of the box.

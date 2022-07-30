@@ -84,6 +84,8 @@ void main() {
         }
 
         if (InputPoll(win) || force_frame) {
+            HandleDrawScaleChange(win);
+
             int spacer = 10 * g_drawScale;
             int edit_box_y = spacer;
             int edit_box_height = g_defaultFont->charHeight + 8 * g_drawScale;
