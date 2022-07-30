@@ -76,36 +76,43 @@ void main() {
     //
     // Main loop
 
+    double next_force_frame_time = GetRealTime() + 0.2;
     while (!win->windowClosed && !win->input.keyDowns[KEY_ESC]) {
-        InputPoll(win);
-
-        int spacer = 10 * g_drawScale;
-        int edit_box_y = spacer;
-        int edit_box_height = g_defaultFont->charHeight + 8 * g_drawScale;
-        int text_view_x = win->bmp->width * 0.3;
-        int views_y = edit_box_y + edit_box_height + spacer;
-        int text_view_width = win->bmp->width - text_view_x - spacer;
-        int views_height = win->bmp->height - views_y - spacer;
-        int list_view_width = text_view_x - spacer * 2;
-
-        BitmapClear(win->bmp, g_backgroundColour);
-
-        if (edit_box_do(win, &edit_box, spacer, edit_box_y, list_view_width, edit_box_height))
-            populate_list_view(&list_view, &dict, edit_box.text);
-
-        text_view_empty(&text_view);
-        list_view_do(win, &list_view, spacer, views_y, list_view_width, views_height);
-        if (list_view.selected_item >= 0) {
-            int def_indices[6];
-            int num_defs = dict_get_def_indices(&dict, list_view.items[list_view.selected_item], def_indices);
-            for (int i = 0; i < num_defs; i++) {
-                text_view_add_text(&text_view, dict_get_clean_def_text(&dict, def_indices[0]));
-            }
+        bool force_frame = GetRealTime() > next_force_frame_time;
+        if (force_frame) {
+            next_force_frame_time = GetRealTime() + 0.2;
         }
 
-        text_view_do(win, &text_view, text_view_x, views_y, text_view_width, views_height);
+        if (InputPoll(win) || force_frame) {
+            int spacer = 10 * g_drawScale;
+            int edit_box_y = spacer;
+            int edit_box_height = g_defaultFont->charHeight + 8 * g_drawScale;
+            int text_view_x = win->bmp->width * 0.3;
+            int views_y = edit_box_y + edit_box_height + spacer;
+            int text_view_width = win->bmp->width - text_view_x - spacer;
+            int views_height = win->bmp->height - views_y - spacer;
+            int list_view_width = text_view_x - spacer * 2;
 
-        UpdateWin(win);
+            BitmapClear(win->bmp, g_backgroundColour);
+
+            if (edit_box_do(win, &edit_box, spacer, edit_box_y, list_view_width, edit_box_height))
+                populate_list_view(&list_view, &dict, edit_box.text);
+
+            text_view_empty(&text_view);
+            list_view_do(win, &list_view, spacer, views_y, list_view_width, views_height);
+            if (list_view.selected_item >= 0) {
+                int def_indices[6];
+                int num_defs = dict_get_def_indices(&dict, list_view.items[list_view.selected_item], def_indices);
+                for (int i = 0; i < num_defs; i++) {
+                    text_view_add_text(&text_view, dict_get_clean_def_text(&dict, def_indices[0]));
+                }
+            }
+
+            text_view_do(win, &text_view, text_view_x, views_y, text_view_width, views_height);
+
+            UpdateWin(win);
+        }
+         
         WaitVsync();
     }
 }
