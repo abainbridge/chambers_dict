@@ -1,11 +1,13 @@
 #pragma once
 
 // Deadfrog lib headers.
+#include "fonts/df_prop.h"
 #include "df_bitmap.h"
 #include "df_time.h"
 #include "df_window.h"
 
 // Standard headers.
+#include <math.h>
 #include <string.h>
 
 
@@ -18,16 +20,39 @@ DfColour g_selectionColour = Colour(21, 79, 255);
 double g_drawScale = 1.0;
 
 
+// ****************************************************************************
+// Misc functions
+// ****************************************************************************
+
 void HandleDrawScaleChange(DfWindow *win) {
+    int scaleChanged = 0;
     if (win->input.keys[KEY_CONTROL]) {
         if (win->input.keyDowns[KEY_EQUALS] || win->input.keyDowns[KEY_PLUS_PAD]) {
             g_drawScale *= 1.1;
+            scaleChanged = 1;
         }
         else if (win->input.keyDowns[KEY_MINUS] || win->input.keyDowns[KEY_MINUS_PAD]) {
             g_drawScale /= 1.1;
+            scaleChanged = 1;
         }
 
+    }
+
+    if (!g_defaultFont || scaleChanged) {
         g_drawScale = ClampDouble(g_drawScale, 0.7, 3.0);
+        double desired_height = g_drawScale * 13.0;
+        int bestFontIdx = 0;
+        char bestDeltaSoFar = fabs(df_prop_sizes[0] - desired_height);
+        for (int i = 1; i < DF_PROP_NUM_FONTS; i++) {
+            double delta = fabs(desired_height - df_prop_sizes[i]);
+            if (delta < bestDeltaSoFar) {
+                bestDeltaSoFar = delta;
+                bestFontIdx = i;
+            }
+        }
+
+        g_defaultFont = LoadFontFromMemory(df_prop_font_datas[bestFontIdx], 
+                                           df_prop_font_datas_num_bytes[bestFontIdx]);
     }
 }
 
