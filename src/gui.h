@@ -24,6 +24,12 @@ double g_drawScale = 1.0;
 // Misc functions
 // ****************************************************************************
 
+int IsMouseInBounds(DfWindow *win, int x, int y, int w, int h) {
+    return (win->input.mouseX >= x && win->input.mouseX < (x + w) &&
+        win->input.mouseY >= y && win->input.mouseY < (y + h));
+}
+
+
 void HandleDrawScaleChange(DfWindow *win) {
     int scaleChanged = 0;
     if (win->input.keys[KEY_CONTROL]) {
@@ -179,30 +185,12 @@ typedef struct {
     char const **items;
     int num_items;
     int selected_item;
+    int first_display_item;
 } list_view_t;
 
 
 // Returns id of item that was selected, or -1 if none were.
 int list_view_do(DfWindow *win, list_view_t *lv, int x, int y, int w, int h) {
-    const int num_rows = h / g_defaultFont->charHeight;
-
-    if (win->input.keyDowns[KEY_DOWN])
-        lv->selected_item++;
-    else if (win->input.keyDowns[KEY_UP])
-        lv->selected_item--;
-    else if (win->input.keyDowns[KEY_PGDN])
-        lv->selected_item += num_rows;
-    else if (win->input.keyDowns[KEY_PGUP])
-        lv->selected_item -= num_rows;
-
-    if (lv->selected_item >= lv->num_items || lv->num_items <= 0)
-        lv->selected_item = lv->num_items - 1;
-    else if (lv->selected_item < 0)
-        lv->selected_item = 0;
-
-    int first_display_item = lv->selected_item - num_rows / 2;
-    first_display_item = ClampInt(first_display_item, 0, lv->num_items - num_rows / 2);
-
     draw_raised_box(win->bmp, x, y, w, h);
     x += 2 * g_drawScale;
     y += 2 * g_drawScale;
@@ -210,8 +198,41 @@ int list_view_do(DfWindow *win, list_view_t *lv, int x, int y, int w, int h) {
     h -= 4 * g_drawScale;
     SetClipRect(win->bmp, x, y, w, h);
 
+    const int num_rows = RoundToInt(h / (double)g_defaultFont->charHeight - 0.9);
+
+    if (win->input.keyDowns[KEY_DOWN]) {
+        lv->selected_item++;
+        lv->first_display_item = IntMax(lv->selected_item - num_rows, lv->first_display_item);
+    }
+    else if (win->input.keyDowns[KEY_UP]) {
+        lv->selected_item--;
+        lv->first_display_item = IntMin(lv->selected_item, lv->first_display_item);
+    }
+    else if (win->input.keyDowns[KEY_PGDN]) {
+        lv->selected_item += num_rows;
+        lv->first_display_item += num_rows;
+    }
+    else if (win->input.keyDowns[KEY_PGUP]) {
+        lv->selected_item -= num_rows;
+        lv->first_display_item -= num_rows;
+    }
+
+    if (win->input.lmbClicked && IsMouseInBounds(win, x, y, w, h)) {
+        int row = (win->input.mouseY - y) / g_defaultFont->charHeight;
+        lv->selected_item = row + lv->first_display_item;
+    }
+
+    if (lv->selected_item >= lv->num_items || lv->num_items <= 0)
+        lv->selected_item = lv->num_items - 1;
+    else if (lv->selected_item < 0)
+        lv->selected_item = 0;
+
+    lv->first_display_item -= win->input.mouseVelZ / 36;
+    lv->first_display_item = ClampInt(lv->first_display_item, 0, lv->num_items - num_rows);
+    if (lv->num_items <= num_rows) lv->first_display_item = 0;
+
     int last_y = y + h;
-    for (int i = first_display_item; i < lv->num_items; i++) {
+    for (int i = lv->first_display_item; i < lv->num_items; i++) {
         if (y > last_y) break;
 
         if (i == lv->selected_item) {
