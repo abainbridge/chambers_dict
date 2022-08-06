@@ -11,10 +11,11 @@
 #include <string.h>
 
 
-DfColour g_backgroundColour = { 0xff323232 };
-DfColour g_buttonShadowColour = { 0xff919191 };
-DfColour g_buttonHighlightColour = { 0xffd9d9d9 };
-DfColour g_normalTextColour = Colour(200, 200, 200, 255);
+DfColour g_backgroundColour = { 0xff494949 };
+DfColour g_frameColour = { 0xff555555 };
+DfColour g_buttonShadowColour = { 0xff323232 };
+DfColour g_buttonHighlightColour = { 0xff6f6f6f };
+DfColour g_normalTextColour = Colour(210, 210, 210, 255);
 DfColour g_selectionColour = Colour(21, 79, 255);
 
 double g_drawScale = 1.0;
@@ -63,7 +64,7 @@ void HandleDrawScaleChange(DfWindow *win) {
 }
 
 
-void draw_raised_box(DfBitmap *bmp, int x, int y, int w, int h) {
+void draw_sunken_box(DfBitmap *bmp, int x, int y, int w, int h) {
     // The specified w and h is the external size of the box.
     //
     //        <-------- w -------->
@@ -79,13 +80,19 @@ void draw_raised_box(DfBitmap *bmp, int x, int y, int w, int h) {
     //       <--->
     //     thickness
 
-    int thickness = RoundToInt(g_drawScale);
-    DfColour light = g_buttonHighlightColour;
-    DfColour dark = g_buttonShadowColour;
+    int thickness = RoundToInt(g_drawScale * 1.5);
+    DfColour dark = g_buttonHighlightColour;
+    DfColour light = g_buttonShadowColour;
     RectFill(bmp, x, y, w, thickness, light); // '1' pixels
     RectFill(bmp, x, y + h - thickness, w, thickness, dark); // '2' pixels
     RectFill(bmp, x, y + thickness, thickness, h - 2 * thickness, light);
     RectFill(bmp, x + w - thickness, y + thickness, thickness, h - 2 * thickness, dark);
+
+    x += thickness;
+    y += thickness;
+    w -= thickness * 2;
+    h -= thickness * 2;
+    RectFill(bmp, x, y, w, h, g_backgroundColour);
 }
 
 
@@ -103,13 +110,13 @@ typedef struct {
 
 // Returns 1 if contents changed.
 int edit_box_do(DfWindow *win, edit_box_t *eb, int x, int y, int w, int h) {
-    draw_raised_box(win->bmp, x, y, w, h);
+    draw_sunken_box(win->bmp, x, y, w, h);
     x += 2 * g_drawScale;
     y += 4 * g_drawScale;
     w -= 4 * g_drawScale;
     h -= 8 * g_drawScale;
     SetClipRect(win->bmp, x, y, w, h);
-       
+
     double now = GetRealTime();
     if (now > eb->nextCursorToggleTime) {
         eb->cursorOn = !eb->cursorOn;
@@ -191,7 +198,7 @@ typedef struct {
 
 // Returns id of item that was selected, or -1 if none were.
 int list_view_do(DfWindow *win, list_view_t *lv, int x, int y, int w, int h) {
-    draw_raised_box(win->bmp, x, y, w, h);
+    draw_sunken_box(win->bmp, x, y, w, h);
     x += 2 * g_drawScale;
     y += 2 * g_drawScale;
     w -= 4 * g_drawScale;
@@ -289,7 +296,7 @@ char const *find_space(char const *c) {
 
 
 void text_view_do(DfWindow *win, text_view_t *tv, int x, int y, int w, int h) {
-    draw_raised_box(win->bmp, x, y, w, h);
+    draw_sunken_box(win->bmp, x, y, w, h);
     x += 4 * g_drawScale;
     y += 2 * g_drawScale;
     w -= 8 * g_drawScale;

@@ -84,7 +84,7 @@ void main() {
         if (InputPoll(win) || force_frame) {
             HandleDrawScaleChange(win);
 
-            int spacer = 10 * g_drawScale;
+            int spacer = 7 * g_drawScale;
             int edit_box_y = spacer;
             int edit_box_height = g_defaultFont->charHeight + 8 * g_drawScale;
             int text_view_x = win->bmp->width * 0.3;
@@ -93,7 +93,11 @@ void main() {
             int views_height = win->bmp->height - views_y - spacer;
             int list_view_width = text_view_x - spacer * 2;
 
-            BitmapClear(win->bmp, g_backgroundColour);
+            RectFill(win->bmp, 0, 0, win->bmp->width, views_y, g_frameColour);
+            RectFill(win->bmp, 0, win->bmp->height - spacer, win->bmp->width, spacer, g_frameColour);
+            RectFill(win->bmp, 0, 0, spacer, win->bmp->height, g_frameColour);
+            RectFill(win->bmp, win->bmp->width - spacer, 0, spacer, win->bmp->height, g_frameColour);
+            RectFill(win->bmp, text_view_x - spacer, 0, spacer, win->bmp->height, g_frameColour);
 
             if (edit_box_do(win, &edit_box, spacer, edit_box_y, list_view_width, edit_box_height))
                 populate_list_view(&list_view, &dict, edit_box.text);
