@@ -49,17 +49,17 @@ void HandleDrawScaleChange(DfWindow *win) {
         g_drawScale = ClampDouble(g_drawScale, 0.7, 3.0);
         double desired_height = g_drawScale * 13.0;
         int bestFontIdx = 0;
-        char bestDeltaSoFar = fabs(df_prop_sizes[0] - desired_height);
-        for (int i = 1; i < DF_PROP_NUM_FONTS; i++) {
-            double delta = fabs(desired_height - df_prop_sizes[i]);
+        char bestDeltaSoFar = fabs(df_prop.pixelHeights[0] - desired_height);
+        for (int i = 1; i < df_prop.numSizes; i++) {
+            double delta = fabs(desired_height - df_prop.pixelHeights[i]);
             if (delta < bestDeltaSoFar) {
                 bestDeltaSoFar = delta;
                 bestFontIdx = i;
             }
         }
 
-        g_defaultFont = LoadFontFromMemory(df_prop_font_datas[bestFontIdx], 
-                                           df_prop_font_datas_num_bytes[bestFontIdx]);
+        g_defaultFont = LoadFontFromMemory(df_prop.dataBlobs[bestFontIdx], 
+            df_prop.dataBlobsSizes[bestFontIdx]);
     }
 }
 
