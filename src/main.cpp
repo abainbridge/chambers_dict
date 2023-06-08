@@ -15,13 +15,14 @@ static const char APPLICATION_NAME[] = "21st Century Dictionary";
 
 // Returns 1 on match, 0 otherwise.
 int wildcard_match(char const *haystack, char const *needle) {
+    bool needleEndsWithQmark = needle[strlen(needle) - 1] == '?';
     while (*haystack) {
         if (*needle == '\0')
-            return 1;
+            return !needleEndsWithQmark;
 
         if (*needle == '*') {
             unsigned remaining_needle_len = strlen(needle);
-            for (unsigned i = 1; i < remaining_needle_len; i++) {
+            for (unsigned i = 0; i < remaining_needle_len; i++) {
                 if (wildcard_match(haystack + i, needle + 1))
                     return 1;
             }
