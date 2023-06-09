@@ -311,7 +311,7 @@ void text_view_do(DfWindow *win, text_view_t *tv, int x, int y, int w, int h) {
         unsigned word_len = space - c;
 
         int num_pixels = GetTextWidth(g_defaultFont, c, word_len);
-        if (current_x + num_pixels >= win->bmp->clipRight) {
+        if (*space != '\n' && current_x + num_pixels >= win->bmp->clipRight) {
             current_x = x;
             y += g_defaultFont->charHeight;
         }
