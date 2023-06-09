@@ -109,7 +109,8 @@ void main() {
                 int def_indices[6];
                 int num_defs = dict_get_def_indices(&dict, list_view.items[list_view.selected_item], def_indices);
                 for (int i = 0; i < num_defs; i++) {
-                    text_view_add_text(&text_view, dict_get_clean_def_text(&dict, def_indices[0]));
+                    text_view_add_text(&text_view, dict_get_clean_def_text(&dict, def_indices[i]));
+                    text_view_add_text(&text_view, "\n\n");
                 }
             }
 
