@@ -355,9 +355,6 @@ void text_view_do(DfWindow *win, text_view_t *tv, int x, int y, int w, int h) {
             y += g_defaultFont->charHeight;
         }
 
-        if (*c == 'd' && c[1] == 'a')
-            c = c;
-
         DrawTextSimpleLen(g_defaultFont, g_normalTextColour, win->bmp, 
             current_x, y - tv->v_scrollbar.current_val, c, word_len);
 
