@@ -97,6 +97,41 @@ void draw_sunken_box(DfBitmap *bmp, int x, int y, int w, int h) {
 
 
 // ****************************************************************************
+// V Scrollbar
+// ****************************************************************************
+
+typedef struct {
+    int maximum;
+    int current_val;
+    int covered_range;
+    int speed;
+} v_scrollbar_t;
+
+int v_scrollbar_do(DfWindow *win, v_scrollbar_t *vs, int x, int y, int w, int h) {
+    vs->current_val -= win->input.mouseVelZ * 0.3;
+    if (vs->current_val < 0)
+        vs->current_val = 0;
+    else if (vs->current_val + vs->covered_range > vs->maximum)
+        vs->current_val = vs->maximum - vs->covered_range;
+
+    RectOutline(win->bmp, x, y, w, h, g_frameColour);
+
+    int handle_gap = 3 * g_drawScale;
+    y += handle_gap;
+    h -= handle_gap * 2;
+    float inv_max = (float)h / (float)vs->maximum;
+    float current_val_as_fraction = vs->current_val * inv_max;
+    float covered_range_as_fraction = vs->covered_range * inv_max;
+    int handle_x = x + handle_gap;
+    int handle_y = y + current_val_as_fraction;
+    int handle_w = w - 2 * handle_gap;
+    int handle_h = covered_range_as_fraction;
+    RectFill(win->bmp, handle_x, handle_y, handle_w, handle_h, g_buttonHighlightColour);
+    return 0;
+}
+
+
+// ****************************************************************************
 // Edit box
 // ****************************************************************************
 
@@ -264,17 +299,13 @@ int list_view_do(DfWindow *win, list_view_t *lv, int x, int y, int w, int h) {
 enum { TEXT_VIEW_MAX_CHARS = 95000 };
 
 typedef struct {
+    v_scrollbar_t v_scrollbar;
     char text[TEXT_VIEW_MAX_CHARS];
 } text_view_t;
 
 
-void text_view_init(text_view_t *tv) {
-    tv->text[0] = '\0';
-}
-
-
 void text_view_empty(text_view_t *tv) {
-    text_view_init(tv);
+    tv->text[0] = '\0';
 }
 
 
@@ -302,22 +333,33 @@ void text_view_do(DfWindow *win, text_view_t *tv, int x, int y, int w, int h) {
     w -= 8 * g_drawScale;
     h -= 4 * g_drawScale;
     SetClipRect(win->bmp, x, y, w, h);
+    
+    int scrollbar_w = 12 * g_drawScale;
+    int scrollbar_x = x + w - scrollbar_w;
+    int scrollbar_y = y + 1 * g_drawScale;
+    int scrollbar_h = h - 2 * g_drawScale;
 
+    int textRight = scrollbar_x;
     int space_pixels = GetTextWidth(g_defaultFont, " ");
     char const *c = tv->text;
     int current_x = x;
+    
+    // For each word...
     while (1) {
         char const *space = find_space(c);
         unsigned word_len = space - c;
 
         int num_pixels = GetTextWidth(g_defaultFont, c, word_len);
-        if (*space != '\n' && current_x + num_pixels >= win->bmp->clipRight) {
+        if (current_x + num_pixels >= textRight) {
             current_x = x;
             y += g_defaultFont->charHeight;
         }
 
+        if (*c == 'd' && c[1] == 'a')
+            c = c;
+
         DrawTextSimpleLen(g_defaultFont, g_normalTextColour, win->bmp, 
-            current_x, y, c, word_len);
+            current_x, y - tv->v_scrollbar.current_val, c, word_len);
 
         current_x += num_pixels + space_pixels;
         c += word_len;
@@ -330,6 +372,12 @@ void text_view_do(DfWindow *win, text_view_t *tv, int x, int y, int w, int h) {
         if (*c == '\0') break;
         c++;
     }
+
+    tv->v_scrollbar.covered_range = scrollbar_h;
+    tv->v_scrollbar.maximum = y - scrollbar_y;
+    if (tv->v_scrollbar.maximum < scrollbar_h)
+        tv->v_scrollbar.maximum = scrollbar_h;
+    v_scrollbar_do(win, &tv->v_scrollbar, scrollbar_x, scrollbar_y, scrollbar_w, scrollbar_h);
 
     ClearClipRect(win->bmp);
 }
