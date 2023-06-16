@@ -127,7 +127,8 @@ char const *dict_get_clean_def_text(dict_t *dict, unsigned idx) {
             c += 6;
         }
         if (starts_with(c, "<LV2>") ||
-            starts_with(c, "<LV3")) {
+            starts_with(c, "<LV3>") || 
+            starts_with(c, "<LV6")) {
             buf[out_pos] = '\n';
             out_pos++;
             while (*c == ' ') c++;
