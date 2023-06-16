@@ -16,8 +16,7 @@ DfWindow *g_win;
 dict_t g_dict;
 edit_box_t g_edit_box = { 0 };
 list_view_t g_list_view = { 0 };
-text_view_t g_text_view;
-
+text_view_t g_text_view = { 0 };
 
 // Returns 1 on match, 0 otherwise.
 int wildcard_match(char const *haystack, char const *needle) {
@@ -68,6 +67,8 @@ static void draw_frame() {
     int text_view_width = g_win->bmp->width - text_view_x - spacer;
     int views_height = g_win->bmp->height - views_y - spacer;
     int list_view_width = text_view_x - spacer * 2;
+    int v_scrollbar_width = spacer * 2;
+    int text_view_scrollbar_x = text_view_x + text_view_width - v_scrollbar_width;
 
     RectFill(g_win->bmp, 0, 0, g_win->bmp->width, views_y, g_frameColour);
     RectFill(g_win->bmp, 0, g_win->bmp->height - spacer, g_win->bmp->width, spacer, g_frameColour);
@@ -90,7 +91,7 @@ static void draw_frame() {
     }
 
     text_view_do(g_win, &g_text_view, text_view_x, views_y, text_view_width, views_height);
-
+    
     UpdateWin(g_win);
 }
 
@@ -106,8 +107,6 @@ void main() {
 
     g_list_view.items = (const char **)malloc(sizeof(const char **) * g_dict.num_words);
     populate_list_view(&g_list_view, &g_dict, g_edit_box.text);
-
-    text_view_init(&g_text_view);
 
 
     //
