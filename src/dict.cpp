@@ -133,6 +133,11 @@ char const *dict_get_clean_def_text(dict_t *dict, unsigned idx) {
             while (*c == ' ') c++;
             c += 5;
         }
+        else if (starts_with(c, "<EXA>")) {
+            buf[out_pos++] = '-';
+            buf[out_pos++] = ' ';
+            c += 5;
+        }
         else if (*c == '<') {
             while (*c != '>') c++;
             c++;
