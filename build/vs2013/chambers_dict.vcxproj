@@ -110,7 +110,9 @@
     <ClCompile Include="..\..\..\deadfrog-lib\src\df_polygon_aa.cpp" />
     <ClCompile Include="..\..\..\deadfrog-lib\src\df_time.cpp" />
     <ClCompile Include="..\..\..\deadfrog-lib\src\df_window.cpp" />
+    <ClCompile Include="..\..\..\deadfrog-lib\src\fonts\df_prop.cpp" />
     <ClCompile Include="..\..\src\dict.cpp" />
+    <ClCompile Include="..\..\src\gui.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -30,6 +30,10 @@
     </ClCompile>
     <ClCompile Include="..\..\src\dict.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
+    <ClCompile Include="..\..\..\deadfrog-lib\src\fonts\df_prop.cpp">
+      <Filter>deadfrog-lib\fonts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\gui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\deadfrog-lib\src\df_bitmap.h">

@@ -1,5 +1,6 @@
 // Deadfrog lib headers
 #include "df_font.h"
+#include "df_time.h"
 #include "df_window.h"
 
 // Project headers
@@ -9,6 +10,8 @@
 // Standard headers
 #include <ctype.h>
 #include <stdlib.h>
+#include <string.h>
+
 
 static const char APPLICATION_NAME[] = "21st Century Dictionary";
 
