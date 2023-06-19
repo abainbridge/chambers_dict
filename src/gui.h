@@ -49,7 +49,7 @@ typedef struct {
     int speed;
 } v_scrollbar_t;
 
-int v_scrollbar_do(DfWindow *win, v_scrollbar_t *vs, int x, int y, int w, int h, bool has_focus);
+int v_scrollbar_do(DfWindow *win, v_scrollbar_t *vs, int x, int y, int w, int h, int has_focus);
 
 
 // ****************************************************************************
@@ -93,6 +93,7 @@ enum { TEXT_VIEW_MAX_CHARS = 95000 };
 typedef struct {
     v_scrollbar_t v_scrollbar;
     char text[TEXT_VIEW_MAX_CHARS];
+    char wrapped_text[TEXT_VIEW_MAX_CHARS];
 } text_view_t;
 
 

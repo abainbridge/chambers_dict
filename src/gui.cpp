@@ -100,7 +100,7 @@ void draw_sunken_box(DfBitmap *bmp, int x, int y, int w, int h) {
 // V Scrollbar
 // ****************************************************************************
 
-int v_scrollbar_do(DfWindow *win, v_scrollbar_t *vs, int x, int y, int w, int h, bool has_focus) {
+int v_scrollbar_do(DfWindow *win, v_scrollbar_t *vs, int x, int y, int w, int h, int has_focus) {
     if (has_focus)
         vs->current_val -= win->input.mouseVelZ * 0.3;
 
@@ -290,15 +290,65 @@ void text_view_add_text(text_view_t *tv, char const *text) {
 }
 
 
-char const *find_space(char const *c) {
+static char const *find_space(char const *c) {
     while (*c != ' ' && *c != '\n' && *c != '\0')
         c++;
     return c;
 }
 
 
+static int text_view_wrap_text(text_view_t *tv, int w) {
+    int space_pixels = GetTextWidth(g_defaultFont, " ");
+    char const *word_in = tv->text;
+    char *word_out = tv->wrapped_text;
+    int current_x = 0;
+    int y = 0;
+
+    // For each word...
+    while (1) {
+        char const *space = find_space(word_in);
+        unsigned word_len = space - word_in;
+
+        int num_pixels = GetTextWidth(g_defaultFont, word_in, word_len);
+        if (current_x + num_pixels >= w) {
+            current_x = 0;
+            y += g_defaultFont->charHeight;
+            *word_out = '\n';
+            word_out++;
+        }
+
+        if (word_out + word_len >= tv->wrapped_text + sizeof(tv->wrapped_text)) {
+            *word_out = '\0';
+            break;
+        }
+
+        memcpy(word_out, word_in, word_len);
+        word_out += word_len;
+
+        current_x += num_pixels + space_pixels;
+        word_in += word_len;
+        *word_out = *space;
+        word_out++;
+
+        if (*space == '\n') {
+            current_x = 0;
+            y += g_defaultFont->charHeight;
+        }
+
+        if (*word_in == '\0') {
+            *word_out = '\0';
+            break;
+        }
+
+        word_in++;
+    }
+
+    return y;
+}
+
+
 void text_view_do(DfWindow *win, text_view_t *tv, int x, int y, int w, int h) {
-    bool has_focus = IsMouseInBounds(win, x, y, w, h);
+    int has_focus = IsMouseInBounds(win, x, y, w, h);
     draw_sunken_box(win->bmp, x, y, w, h);
     x += 4 * g_drawScale;
     y += 2 * g_drawScale;
@@ -313,40 +363,25 @@ void text_view_do(DfWindow *win, text_view_t *tv, int x, int y, int w, int h) {
 
     int textRight = scrollbar_x;
     int space_pixels = GetTextWidth(g_defaultFont, " ");
-    char const *c = tv->text;
+    char const *c = tv->wrapped_text;
     int current_x = x;
 
-    // For each word...
-    while (1) {
-        char const *space = find_space(c);
-        unsigned word_len = space - c;
-
-        int num_pixels = GetTextWidth(g_defaultFont, c, word_len);
-        if (current_x + num_pixels >= textRight) {
-            current_x = x;
-            y += g_defaultFont->charHeight;
-        }
-
-        DrawTextSimpleLen(g_defaultFont, g_normalTextColour, win->bmp,
-            current_x, y - tv->v_scrollbar.current_val, c, word_len);
-
-        current_x += num_pixels + space_pixels;
-        c += word_len;
-
-        if (*space == '\n') {
-            current_x = x;
-            y += g_defaultFont->charHeight;
-        }
-
-        if (*c == '\0') break;
-        c++;
-    }
+    int total_pixel_height = text_view_wrap_text(tv, w - scrollbar_w);
 
     tv->v_scrollbar.covered_range = scrollbar_h;
-    tv->v_scrollbar.maximum = y - scrollbar_y;
+    tv->v_scrollbar.maximum = total_pixel_height;
     if (tv->v_scrollbar.maximum < scrollbar_h)
         tv->v_scrollbar.maximum = scrollbar_h;
     v_scrollbar_do(win, &tv->v_scrollbar, scrollbar_x, scrollbar_y, scrollbar_w, scrollbar_h, has_focus);
+
+    while (1) {
+        char const *end_of_line = strchr(c, '\n');
+        if (!end_of_line) break;
+        DrawTextSimpleLen(g_defaultFont, g_normalTextColour, win->bmp,
+            current_x, y - tv->v_scrollbar.current_val, c, end_of_line - c);
+        c = end_of_line + 1;
+        y += g_defaultFont->charHeight;
+    }
 
     ClearClipRect(win->bmp);
 }
