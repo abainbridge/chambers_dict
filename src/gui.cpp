@@ -100,8 +100,10 @@ void draw_sunken_box(DfBitmap *bmp, int x, int y, int w, int h) {
 // V Scrollbar
 // ****************************************************************************
 
-int v_scrollbar_do(DfWindow *win, v_scrollbar_t *vs, int x, int y, int w, int h) {
-    vs->current_val -= win->input.mouseVelZ * 0.3;
+int v_scrollbar_do(DfWindow *win, v_scrollbar_t *vs, int x, int y, int w, int h, bool has_focus) {
+    if (has_focus)
+        vs->current_val -= win->input.mouseVelZ * 0.3;
+
     if (vs->current_val < 0)
         vs->current_val = 0;
     else if (vs->current_val + vs->covered_range > vs->maximum)
@@ -296,6 +298,7 @@ char const *find_space(char const *c) {
 
 
 void text_view_do(DfWindow *win, text_view_t *tv, int x, int y, int w, int h) {
+    bool has_focus = IsMouseInBounds(win, x, y, w, h);
     draw_sunken_box(win->bmp, x, y, w, h);
     x += 4 * g_drawScale;
     y += 2 * g_drawScale;
@@ -343,7 +346,7 @@ void text_view_do(DfWindow *win, text_view_t *tv, int x, int y, int w, int h) {
     tv->v_scrollbar.maximum = y - scrollbar_y;
     if (tv->v_scrollbar.maximum < scrollbar_h)
         tv->v_scrollbar.maximum = scrollbar_h;
-    v_scrollbar_do(win, &tv->v_scrollbar, scrollbar_x, scrollbar_y, scrollbar_w, scrollbar_h);
+    v_scrollbar_do(win, &tv->v_scrollbar, scrollbar_x, scrollbar_y, scrollbar_w, scrollbar_h, has_focus);
 
     ClearClipRect(win->bmp);
 }

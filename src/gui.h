@@ -49,7 +49,7 @@ typedef struct {
     int speed;
 } v_scrollbar_t;
 
-int v_scrollbar_do(DfWindow *win, v_scrollbar_t *vs, int x, int y, int w, int h);
+int v_scrollbar_do(DfWindow *win, v_scrollbar_t *vs, int x, int y, int w, int h, bool has_focus);
 
 
 // ****************************************************************************
