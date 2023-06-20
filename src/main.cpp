@@ -22,11 +22,12 @@ list_view_t g_list_view = { 0 };
 text_view_t g_text_view = { 0 };
 
 // Returns 1 on match, 0 otherwise.
-int wildcard_match(char const *haystack, char const *needle) {
-    bool needleEndsWithQmark = needle[strlen(needle) - 1] == '?';
+static int wildcard_match(char const *haystack, char const *needle) {
+    int do_substring_match = !strchr(needle, '?');
+
     while (*haystack) {
         if (*needle == '\0')
-            return !needleEndsWithQmark;
+            return do_substring_match;
 
         if (*needle == '*') {
             unsigned remaining_needle_len = strlen(needle);
@@ -42,11 +43,13 @@ int wildcard_match(char const *haystack, char const *needle) {
         needle++;
     }
 
-    return *haystack == *needle;
+    if (*haystack == *needle || strcmp(needle, "*") == 0)
+        return 1;
+    return 0;
 }
 
 
-void populate_list_view(list_view_t *lv, dict_t *dict, char const *filter) {
+static void populate_list_view(list_view_t *lv, dict_t *dict, char const *filter) {
     lv->num_items = 0;
 
     unsigned filter_len = strlen(filter);
