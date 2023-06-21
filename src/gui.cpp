@@ -25,13 +25,21 @@ double g_drawScale = 1.0;
 // Misc functions
 // ****************************************************************************
 
+static int is_point_in_rect(int px, int py, int rx, int ry, int rw, int rh) {
+    return px >= rx && 
+           px < (rx + rw) &&
+           py >= ry && 
+           py < (ry + rh);
+}
+
+
 int IsMouseInBounds(DfWindow *win, int x, int y, int w, int h) {
     return (win->input.mouseX >= x && win->input.mouseX < (x + w) &&
         win->input.mouseY >= y && win->input.mouseY < (y + h));
 }
 
 
-void HandleDrawScaleChange(DfWindow *win) {
+void gui_do_frame(DfWindow *win) {
     int scaleChanged = 0;
     if (win->input.keys[KEY_CONTROL]) {
         if (win->input.keyDowns[KEY_EQUALS] || win->input.keyDowns[KEY_PLUS_PAD]) {

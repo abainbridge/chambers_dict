@@ -15,11 +15,11 @@
 
 static const char APPLICATION_NAME[] = "21st Century Dictionary";
 
-DfWindow *g_win;
-dict_t g_dict;
-edit_box_t g_edit_box = { 0 };
-list_view_t g_list_view = { 0 };
-text_view_t g_text_view = { 0 };
+static DfWindow *g_win;
+static dict_t g_dict;
+static edit_box_t g_edit_box = { 0 };
+static list_view_t g_list_view = { 0 };
+static text_view_t g_text_view = { 0 };
 
 // Returns 1 on match, 0 otherwise.
 static int wildcard_match(char const *haystack, char const *needle) {
@@ -63,7 +63,7 @@ static void populate_list_view(list_view_t *lv, dict_t *dict, char const *filter
 }
 
 static void draw_frame() {
-    HandleDrawScaleChange(g_win);
+    gui_do_frame(g_win);
 
     int spacer = 7 * g_drawScale;
     int edit_box_y = spacer;
@@ -137,8 +137,7 @@ void main() {
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 int WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE /*_hPrevInstance*/,
-    LPSTR cmdLine, int /*_iCmdShow*/)
-{
+    LPSTR cmdLine, int /*_iCmdShow*/) {
     main();
     return 0;
 }

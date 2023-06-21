@@ -19,7 +19,7 @@ extern double g_drawScale;
 // ****************************************************************************
 
 int IsMouseInBounds(DfWindow *win, int x, int y, int w, int h);
-void HandleDrawScaleChange(DfWindow *win);
+void gui_do_frame(DfWindow *win);
 
 // The specified w and h is the external size of the box.
 //
