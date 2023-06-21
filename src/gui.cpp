@@ -11,9 +11,10 @@
 #include <string.h>
 
 
-DfColour g_backgroundColour = { 0xff494949 };
-DfColour g_frameColour = { 0xff555555 };
-DfColour g_buttonShadowColour = { 0xff323232 };
+DfColour g_backgroundColour = { 0xff353535 };
+DfColour g_frameColour = { 0xff424242 };
+DfColour g_buttonShadowColour = { 0xff2e2e2e };
+DfColour g_buttonColour = { 0xff5a5a5a };
 DfColour g_buttonHighlightColour = { 0xff6f6f6f };
 DfColour g_normalTextColour = Colour(210, 210, 210, 255);
 DfColour g_selectionColour = Colour(21, 79, 255);
@@ -95,11 +96,10 @@ void draw_sunken_box(DfBitmap *bmp, int x, int y, int w, int h) {
     //     thickness
 
     int thickness = RoundToInt(g_drawScale * 1.5);
-    DfColour dark = g_buttonHighlightColour;
-    DfColour light = g_buttonShadowColour;
-    RectFill(bmp, x, y, w, thickness, light); // '1' pixels
+    DfColour dark = g_buttonShadowColour;
+    RectFill(bmp, x, y, w, thickness, dark); // '1' pixels
     RectFill(bmp, x, y + h - thickness, w, thickness, dark); // '2' pixels
-    RectFill(bmp, x, y + thickness, thickness, h - 2 * thickness, light);
+    RectFill(bmp, x, y + thickness, thickness, h - 2 * thickness, dark);
     RectFill(bmp, x + w - thickness, y + thickness, thickness, h - 2 * thickness, dark);
 
     x += thickness;
@@ -140,9 +140,9 @@ int v_scrollbar_do(DfWindow *win, v_scrollbar_t *vs, int x, int y, int w, int h,
     else if (vs->current_val + vs->covered_range > vs->maximum)
         vs->current_val = vs->maximum - vs->covered_range;
 
-    RectOutline(win->bmp, x, y, w, h, g_frameColour);
+    RectFill(win->bmp, x, y, w, h, g_frameColour);
 
-    int handle_gap = 3 * g_drawScale;
+    int handle_gap = g_drawScale;
     y += handle_gap;
     h -= handle_gap * 2;
     float inv_max = (float)h / (float)vs->maximum;
@@ -152,7 +152,11 @@ int v_scrollbar_do(DfWindow *win, v_scrollbar_t *vs, int x, int y, int w, int h,
     int handle_y = y + current_val_as_fraction;
     int handle_w = w - 2 * handle_gap;
     int handle_h = covered_range_as_fraction;
-    RectFill(win->bmp, handle_x, handle_y, handle_w, handle_h, g_buttonHighlightColour);
+
+    DfColour handleColour = g_buttonColour;
+    if (mouse_in_bounds || vs->dragging)
+        handleColour = g_buttonHighlightColour;
+    RectFill(win->bmp, handle_x, handle_y, handle_w, handle_h, handleColour);
     return 0;
 }
 
@@ -381,16 +385,18 @@ static int text_view_wrap_text(text_view_t *tv, int w) {
 void text_view_do(DfWindow *win, text_view_t *tv, int x, int y, int w, int h) {
     int has_focus = IsMouseInBounds(win, x, y, w, h);
     draw_sunken_box(win->bmp, x, y, w, h);
-    x += 4 * g_drawScale;
-    y += 2 * g_drawScale;
-    w -= 8 * g_drawScale;
-    h -= 4 * g_drawScale;
+
+    int border_width = 2 * g_drawScale;
+    x += 2 * border_width;
+    y += 1 * border_width;
+    w -= 4 * border_width;
+    h -= 2 * border_width;
     SetClipRect(win->bmp, x, y, w, h);
 
     int scrollbar_w = 12 * g_drawScale;
     int scrollbar_x = x + w - scrollbar_w;
-    int scrollbar_y = y + 1 * g_drawScale;
-    int scrollbar_h = h - 2 * g_drawScale;
+    int scrollbar_y = y + 1 * border_width;
+    int scrollbar_h = h - 2 * border_width;
 
     int textRight = scrollbar_x;
     int space_pixels = GetTextWidth(g_defaultFont, " ");
