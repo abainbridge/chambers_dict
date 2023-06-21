@@ -91,15 +91,13 @@ int dict_get_def_indices(dict_t *dict, char const *word, int indices[6]) {
 
 static int starts_with(char const *haystack, char const *needle) {
     while (*haystack != '\0') {
-        if (*needle == '\0')
-            return 1;
         if (*haystack != *needle)
-            return 0;
+            break;
         haystack++;
         needle++;
     }
 
-    return 0;
+    return *needle == '\0';
 }
 
 
@@ -126,9 +124,15 @@ char const *dict_get_clean_def_text(dict_t *dict, unsigned idx) {
             while (*c == ' ') c++;
             c += 6;
         }
-        if (starts_with(c, "<LV2>") ||
-            starts_with(c, "<LV3>") || 
-            starts_with(c, "<LV6")) {
+        if (starts_with(c, "<LV2>")) {
+            buf[out_pos] = '\n';
+            out_pos++;
+            buf[out_pos] = '\n';
+            out_pos++;
+            c += 5;
+        }
+        else if (starts_with(c, "<LV3>") || 
+                starts_with(c, "<LV6")) {
             buf[out_pos] = '\n';
             out_pos++;
             while (*c == ' ') c++;
