@@ -12,6 +12,8 @@ extern DfColour g_normalTextColour;
 extern DfColour g_selectionColour;
 
 extern double g_drawScale;
+extern int g_dragStartX;
+extern int g_dragStartY;
 
 
 // ****************************************************************************
@@ -47,6 +49,9 @@ typedef struct {
     int current_val;
     int covered_range;
     int speed;
+
+    int dragging;
+    int current_val_at_drag_start;
 } v_scrollbar_t;
 
 int v_scrollbar_do(DfWindow *win, v_scrollbar_t *vs, int x, int y, int w, int h, int has_focus);

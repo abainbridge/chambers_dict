@@ -19,6 +19,8 @@ DfColour g_normalTextColour = Colour(210, 210, 210, 255);
 DfColour g_selectionColour = Colour(21, 79, 255);
 
 double g_drawScale = 1.0;
+int g_dragStartX;
+int g_dragStartY;
 
 
 // ****************************************************************************
@@ -34,12 +36,16 @@ static int is_point_in_rect(int px, int py, int rx, int ry, int rw, int rh) {
 
 
 int IsMouseInBounds(DfWindow *win, int x, int y, int w, int h) {
-    return (win->input.mouseX >= x && win->input.mouseX < (x + w) &&
-        win->input.mouseY >= y && win->input.mouseY < (y + h));
+    return is_point_in_rect(win->input.mouseX, win->input.mouseY, x, y, w, h);
 }
 
 
 void gui_do_frame(DfWindow *win) {
+    if (win->input.lmbClicked) {
+        g_dragStartX = win->input.mouseX;
+        g_dragStartY = win->input.mouseY;
+    }
+
     int scaleChanged = 0;
     if (win->input.keys[KEY_CONTROL]) {
         if (win->input.keyDowns[KEY_EQUALS] || win->input.keyDowns[KEY_PLUS_PAD]) {
@@ -111,6 +117,23 @@ void draw_sunken_box(DfBitmap *bmp, int x, int y, int w, int h) {
 int v_scrollbar_do(DfWindow *win, v_scrollbar_t *vs, int x, int y, int w, int h, int has_focus) {
     if (has_focus)
         vs->current_val -= win->input.mouseVelZ * 0.3;
+
+    int mouse_in_bounds = IsMouseInBounds(win, x, y, w, h);
+    if (win->input.lmbClicked && mouse_in_bounds) {
+        vs->dragging = true;
+        vs->current_val_at_drag_start = vs->current_val;
+    }
+    else if (!win->input.lmb) {
+        vs->dragging = false;
+    }
+
+    if (vs->dragging) {
+        int dragY = win->input.mouseY - g_dragStartY;
+        if (dragY != 0)
+            dragY = dragY;
+        double scale = vs->maximum / (double)h;
+        vs->current_val = vs->current_val_at_drag_start + dragY * scale;
+    }
 
     if (vs->current_val < 0)
         vs->current_val = 0;
