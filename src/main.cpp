@@ -30,8 +30,8 @@ static int wildcard_match(char const *haystack, char const *needle) {
             return do_substring_match;
 
         if (*needle == '*') {
-            unsigned remaining_needle_len = strlen(needle);
-            for (unsigned i = 0; i < remaining_needle_len; i++) {
+            unsigned remaining_haystack_len = strlen(haystack);
+            for (unsigned i = 0; i < remaining_haystack_len; i++) {
                 if (wildcard_match(haystack + i, needle + 1))
                     return 1;
             }
