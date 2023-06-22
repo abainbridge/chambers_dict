@@ -12,7 +12,7 @@
 
 
 DfColour g_backgroundColour = { 0xff353535 };
-DfColour g_frameColour = { 0xff424242 };
+DfColour g_frameColour = { 0xff454545 };
 DfColour g_buttonShadowColour = { 0xff2e2e2e };
 DfColour g_buttonColour = { 0xff5a5a5a };
 DfColour g_buttonHighlightColour = { 0xff6f6f6f };
@@ -393,7 +393,7 @@ void text_view_do(DfWindow *win, text_view_t *tv, int x, int y, int w, int h) {
     h -= 2 * border_width;
     SetClipRect(win->bmp, x, y, w, h);
 
-    int scrollbar_w = 12 * g_drawScale;
+    int scrollbar_w = 10 * g_drawScale;
     int scrollbar_x = x + w - scrollbar_w;
     int scrollbar_y = y + 1 * border_width;
     int scrollbar_h = h - 2 * border_width;
@@ -411,11 +411,12 @@ void text_view_do(DfWindow *win, text_view_t *tv, int x, int y, int w, int h) {
         tv->v_scrollbar.maximum = scrollbar_h;
     v_scrollbar_do(win, &tv->v_scrollbar, scrollbar_x, scrollbar_y, scrollbar_w, scrollbar_h, has_focus);
 
+    y -= tv->v_scrollbar.current_val;
     while (1) {
         char const *end_of_line = strchr(c, '\n');
         if (!end_of_line) break;
         DrawTextSimpleLen(g_defaultFont, g_normalTextColour, win->bmp,
-            current_x, y - tv->v_scrollbar.current_val, c, end_of_line - c);
+            current_x, y, c, end_of_line - c);
         c = end_of_line + 1;
         y += g_defaultFont->charHeight;
     }
