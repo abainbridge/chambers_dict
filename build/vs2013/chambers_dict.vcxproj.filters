@@ -68,6 +68,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\dict.h" />
     <ClInclude Include="..\..\src\gui.h" />
+    <ClInclude Include="..\..\icon\resource.h">
+      <Filter>icon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="deadfrog-lib">
@@ -76,5 +79,18 @@
     <Filter Include="deadfrog-lib\fonts">
       <UniqueIdentifier>{df0a049b-f243-4323-9ef5-9c10e22ddaab}</UniqueIdentifier>
     </Filter>
+    <Filter Include="icon">
+      <UniqueIdentifier>{4bc54594-6c9d-4f43-aa84-7326dc0161a3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\icon\21st.rc">
+      <Filter>icon</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\icon\icon1.ico">
+      <Filter>icon</Filter>
+    </Image>
   </ItemGroup>
 </Project>
