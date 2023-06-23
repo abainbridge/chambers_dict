@@ -131,7 +131,6 @@
     <ClInclude Include="..\..\..\deadfrog-lib\src\df_time.h" />
     <ClInclude Include="..\..\..\deadfrog-lib\src\df_window.h" />
     <ClInclude Include="..\..\..\deadfrog-lib\src\fonts\df_prop.h" />
-    <ClInclude Include="..\..\icon\resource.h" />
     <ClInclude Include="..\..\src\dict.h" />
     <ClInclude Include="..\..\src\gui.h" />
   </ItemGroup>

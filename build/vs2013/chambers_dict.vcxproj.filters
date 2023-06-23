@@ -68,9 +68,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\dict.h" />
     <ClInclude Include="..\..\src\gui.h" />
-    <ClInclude Include="..\..\icon\resource.h">
-      <Filter>icon</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="deadfrog-lib">
