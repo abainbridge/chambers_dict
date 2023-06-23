@@ -23,7 +23,9 @@ static text_view_t g_text_view = { 0 };
 
 // Returns 1 on match, 0 otherwise.
 static int wildcard_match(char const *haystack, char const *needle) {
-    int do_substring_match = !strchr(needle, '?');
+    int do_substring_match = true;
+    if (strchr(needle, '?') || strchr(needle, '*'))
+        do_substring_match = false;
 
     while (*haystack) {
         if (*needle == '\0')
