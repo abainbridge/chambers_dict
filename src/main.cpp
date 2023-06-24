@@ -18,6 +18,7 @@ static const char APPLICATION_NAME[] = "21st Century Dictionary";
 static DfWindow *g_win;
 static dict_t g_dict;
 static edit_box_t g_edit_box = { 0 };
+static button_t g_help_button = { "Help" };
 static list_view_t g_list_view = { 0 };
 static text_view_t g_text_view = { 0 };
 
@@ -70,6 +71,10 @@ static void draw_frame() {
     int spacer = 7 * g_drawScale;
     int edit_box_y = spacer;
     int edit_box_height = g_defaultFont->charHeight + 8 * g_drawScale;
+    int help_button_w = 60 * g_drawScale;
+    int help_button_h = edit_box_height;
+    int help_button_x = g_win->bmp->width - help_button_w - spacer;
+    int help_button_y = edit_box_y;
     int text_view_x = g_win->bmp->width * 0.3;
     int views_y = edit_box_y + edit_box_height + spacer;
     int text_view_width = g_win->bmp->width - text_view_x - spacer;
@@ -86,6 +91,12 @@ static void draw_frame() {
 
     if (edit_box_do(g_win, &g_edit_box, spacer, edit_box_y, list_view_width, edit_box_height))
         populate_list_view(&g_list_view, &g_dict, g_edit_box.text);
+
+    if (button_do(g_win, &g_help_button, help_button_x, help_button_y,
+           help_button_w, help_button_h)) {
+        strcpy(g_edit_box.text, "help text");
+        populate_list_view(&g_list_view, &g_dict, g_edit_box.text);
+    }
 
     text_view_empty(&g_text_view);
     list_view_do(g_win, &g_list_view, spacer, views_y, list_view_width, views_height);

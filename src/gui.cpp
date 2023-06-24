@@ -423,3 +423,19 @@ void text_view_do(DfWindow *win, text_view_t *tv, int x, int y, int w, int h) {
 
     ClearClipRect(win->bmp);
 }
+
+
+// ****************************************************************************
+// Button
+// ****************************************************************************
+
+int button_do(DfWindow *win, button_t *b, int x, int y, int w, int h) {
+    int mouse_in_bounds = IsMouseInBounds(win, x, y, w, h);
+    DfColour handleColour = g_buttonColour;
+    if (mouse_in_bounds)
+        handleColour = g_buttonHighlightColour;
+    RectFill(win->bmp, x, y, w, h, handleColour);
+    DrawTextCentre(g_defaultFont, g_normalTextColour, win->bmp, 
+        x + w / 2, y + h / 5, b->label);
+    return mouse_in_bounds && win->input.lmbClicked;
+}

@@ -105,3 +105,15 @@ typedef struct {
 void text_view_empty(text_view_t *tv);
 void text_view_add_text(text_view_t *tv, char const *text);
 void text_view_do(DfWindow *win, text_view_t *tv, int x, int y, int w, int h);
+
+
+// ****************************************************************************
+// Button
+// ****************************************************************************
+
+typedef struct {
+    char const *label;
+} button_t;
+
+
+int button_do(DfWindow *win, button_t *b, int x, int y, int w, int h);
