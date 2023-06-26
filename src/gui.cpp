@@ -36,7 +36,7 @@ static int is_point_in_rect(int px, int py, int rx, int ry, int rw, int rh) {
 }
 
 
-int IsMouseInBounds(DfWindow *win, int x, int y, int w, int h) {
+int is_mouse_in_bounds(DfWindow *win, int x, int y, int w, int h) {
     return is_point_in_rect(win->input.mouseX, win->input.mouseY, x, y, w, h);
 }
 
@@ -118,7 +118,7 @@ int v_scrollbar_do(DfWindow *win, v_scrollbar_t *vs, int x, int y, int w, int h,
     if (has_focus)
         vs->current_val -= win->input.mouseVelZ * 0.3;
 
-    int mouse_in_bounds = IsMouseInBounds(win, x, y, w, h);
+    int mouse_in_bounds = is_mouse_in_bounds(win, x, y, w, h);
     if (win->input.lmbClicked && mouse_in_bounds) {
         vs->dragging = true;
         vs->current_val_at_drag_start = vs->current_val;
@@ -273,7 +273,7 @@ int list_view_do(DfWindow *win, list_view_t *lv, int x, int y, int w, int h) {
         lv->first_display_item -= num_rows;
     }
 
-    if (win->input.lmbClicked && IsMouseInBounds(win, x, y, w, h)) {
+    if (win->input.lmbClicked && is_mouse_in_bounds(win, x, y, w, h)) {
         int row = (win->input.mouseY - y) / g_defaultFont->charHeight;
         lv->selected_item = row + lv->first_display_item;
     }
@@ -383,7 +383,7 @@ static int text_view_wrap_text(text_view_t *tv, int w) {
 
 
 void text_view_do(DfWindow *win, text_view_t *tv, int x, int y, int w, int h) {
-    int has_focus = IsMouseInBounds(win, x, y, w, h);
+    int mouse_in_bounds = is_mouse_in_bounds(win, x, y, w, h);
     draw_sunken_box(win->bmp, x, y, w, h);
 
     int border_width = 2 * g_drawScale;
@@ -401,7 +401,6 @@ void text_view_do(DfWindow *win, text_view_t *tv, int x, int y, int w, int h) {
     int textRight = scrollbar_x;
     int space_pixels = GetTextWidth(g_defaultFont, " ");
     char const *c = tv->wrapped_text;
-    int current_x = x;
 
     int total_pixel_height = text_view_wrap_text(tv, w - scrollbar_w);
 
@@ -409,14 +408,14 @@ void text_view_do(DfWindow *win, text_view_t *tv, int x, int y, int w, int h) {
     tv->v_scrollbar.maximum = total_pixel_height;
     if (tv->v_scrollbar.maximum < scrollbar_h)
         tv->v_scrollbar.maximum = scrollbar_h;
-    v_scrollbar_do(win, &tv->v_scrollbar, scrollbar_x, scrollbar_y, scrollbar_w, scrollbar_h, has_focus);
+    v_scrollbar_do(win, &tv->v_scrollbar, scrollbar_x, scrollbar_y, scrollbar_w, scrollbar_h, mouse_in_bounds);
 
     y -= tv->v_scrollbar.current_val;
     while (1) {
         char const *end_of_line = strchr(c, '\n');
         if (!end_of_line) break;
         DrawTextSimpleLen(g_defaultFont, g_normalTextColour, win->bmp,
-            current_x, y, c, end_of_line - c);
+            x, y, c, end_of_line - c);
         c = end_of_line + 1;
         y += g_defaultFont->charHeight;
     }
@@ -430,7 +429,7 @@ void text_view_do(DfWindow *win, text_view_t *tv, int x, int y, int w, int h) {
 // ****************************************************************************
 
 int button_do(DfWindow *win, button_t *b, int x, int y, int w, int h) {
-    int mouse_in_bounds = IsMouseInBounds(win, x, y, w, h);
+    int mouse_in_bounds = is_mouse_in_bounds(win, x, y, w, h);
     DfColour handleColour = g_buttonColour;
     if (mouse_in_bounds)
         handleColour = g_buttonHighlightColour;
