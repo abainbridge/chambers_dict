@@ -17,7 +17,7 @@ DfColour g_buttonShadowColour = { 0xff2e2e2e };
 DfColour g_buttonColour = { 0xff5a5a5a };
 DfColour g_buttonHighlightColour = { 0xff6f6f6f };
 DfColour g_normalTextColour = Colour(210, 210, 210, 255);
-DfColour g_selectionColour = Colour(21, 79, 255);
+DfColour g_selectionColour = Colour(18, 71, 235);
 
 double g_drawScale = 1.0;
 int g_dragStartX;
@@ -245,7 +245,6 @@ int edit_box_do(DfWindow *win, edit_box_t *eb, int x, int y, int w, int h) {
 // List View
 // ****************************************************************************
 
-// Returns id of item that was selected, or -1 if none were.
 int list_view_do(DfWindow *win, list_view_t *lv, int x, int y, int w, int h) {
     draw_sunken_box(win->bmp, x, y, w, h);
     x += 2 * g_drawScale;
