@@ -20,7 +20,7 @@ extern int g_dragStartY;
 // Misc functions
 // ****************************************************************************
 
-int IsMouseInBounds(DfWindow *win, int x, int y, int w, int h);
+int is_mouse_in_bounds(DfWindow *win, int x, int y, int w, int h);
 void gui_do_frame(DfWindow *win);
 
 // The specified w and h is the external size of the box.
