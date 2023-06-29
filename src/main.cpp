@@ -1,4 +1,5 @@
 // Deadfrog lib headers
+#include "df_clipboard.h"
 #include "df_font.h"
 #include "df_time.h"
 #include "df_window.h"
@@ -94,7 +95,7 @@ static void draw_frame() {
         populate_list_view(&g_list_view, &g_dict, g_edit_box.text);
 
     if (button_do(g_win, &g_help_button, help_button_x, help_button_y,
-           help_button_w, help_button_h)) {
+        help_button_w, help_button_h)) {
         strcpy(g_edit_box.text, "help text");
         populate_list_view(&g_list_view, &g_dict, g_edit_box.text);
     }
@@ -115,6 +116,14 @@ static void draw_frame() {
     }
 
     text_view_do(g_win, &g_text_view, text_view_x, views_y, text_view_width, views_height);
+
+    if (g_win->input.keyDowns[KEY_C] && g_win->input.keys[KEY_CONTROL]) {
+        int num_chars;
+        char const *selected_text = text_view_get_selected_text(&g_text_view, &num_chars);
+        if (selected_text) {
+            ClipboardSetData(selected_text, num_chars);
+        }
+    }
     
     UpdateWin(g_win);
 }

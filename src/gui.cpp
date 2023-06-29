@@ -383,12 +383,12 @@ static int text_view_wrap_text(text_view_t *tv, int w) {
 }
 
 
-static void get_selection_coords(text_view_t *tv, int *sx, int *sy, int *ex, int *ey) {
+static int get_selection_coords(text_view_t *tv, int *sx, int *sy, int *ex, int *ey) {
     int x_is_equal = (tv->selection_start_x == tv->selection_end_x);
     int y_is_equal = (tv->selection_start_y == tv->selection_end_y);
     if (x_is_equal && y_is_equal) {
         *sx = *sy = *ex = *ey = -1;
-        return;
+        return 0;
     }
 
     int swap_needed = (tv->selection_start_y > tv->selection_end_y);
@@ -407,6 +407,8 @@ static void get_selection_coords(text_view_t *tv, int *sx, int *sy, int *ex, int
         *ex = tv->selection_end_x;
         *ey = tv->selection_end_y;
     }
+
+    return 1;
 }
 
 
@@ -499,6 +501,38 @@ void text_view_do(DfWindow *win, text_view_t *tv, int x, int y, int w, int h) {
 
     ClearClipRect(win->bmp);
 }
+
+
+char const *text_view_get_selected_text(text_view_t *tv, int *num_chars) {
+    int sel_start_x, sel_start_y, sel_end_x, sel_end_y;
+    if (get_selection_coords(tv, &sel_start_x, &sel_start_y, &sel_end_x, &sel_end_y) == 0)
+        return NULL;
+
+    // Find the start of the selected text.
+    char const *line = tv->wrapped_text;
+    int line_num = 0;
+    while (line_num < sel_start_y) {
+        char const *end_of_line = strchr(line, '\n');
+        DebugAssert(end_of_line);
+        line = end_of_line + 1;
+        line_num++;
+    }
+
+    char const *start_of_block = line + sel_start_x;
+
+    // Find the end of the selected text.
+    while (line_num < sel_end_y) {
+        char const *end_of_line = strchr(line, '\n');
+        DebugAssert(end_of_line);
+        line = end_of_line + 1;
+        line_num++;
+    }
+
+    *num_chars = line - start_of_block + sel_end_x + 1;
+
+    return start_of_block;
+}
+
 
 
 // ****************************************************************************

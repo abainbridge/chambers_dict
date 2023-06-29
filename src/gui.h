@@ -111,6 +111,7 @@ typedef struct {
 void text_view_empty(text_view_t *tv);
 void text_view_add_text(text_view_t *tv, char const *text);
 void text_view_do(DfWindow *win, text_view_t *tv, int x, int y, int w, int h);
+char const *text_view_get_selected_text(text_view_t *tv, int *num_chars);
 
 
 // ****************************************************************************
