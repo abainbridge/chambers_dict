@@ -99,6 +99,12 @@ typedef struct {
     v_scrollbar_t v_scrollbar;
     char text[TEXT_VIEW_MAX_CHARS];
     char wrapped_text[TEXT_VIEW_MAX_CHARS];
+    
+    // If start and end coords are the same, then there is no selection block.
+    int selection_start_x;
+    int selection_start_y;
+    int selection_end_x;
+    int selection_end_y;
 } text_view_t;
 
 

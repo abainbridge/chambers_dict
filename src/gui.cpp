@@ -311,6 +311,8 @@ int list_view_do(DfWindow *win, list_view_t *lv, int x, int y, int w, int h) {
 
 void text_view_empty(text_view_t *tv) {
     tv->text[0] = '\0';
+    tv->selection_start_x = tv->selection_end_x;
+    tv->selection_start_y = tv->selection_end_y;
 }
 
 
@@ -381,6 +383,46 @@ static int text_view_wrap_text(text_view_t *tv, int w) {
 }
 
 
+static void get_selection_coords(text_view_t *tv, int *sx, int *sy, int *ex, int *ey) {
+    int x_is_equal = (tv->selection_start_x == tv->selection_end_x);
+    int y_is_equal = (tv->selection_start_y == tv->selection_end_y);
+    if (x_is_equal && y_is_equal) {
+        *sx = *sy = *ex = *ey = -1;
+        return;
+    }
+
+    int swap_needed = (tv->selection_start_y > tv->selection_end_y);
+    if (y_is_equal && tv->selection_start_x > tv->selection_end_x)
+        swap_needed = 1;
+
+    if (swap_needed) {
+        *sx = tv->selection_end_x;
+        *sy = tv->selection_end_y;
+        *ex = tv->selection_start_x;
+        *ey = tv->selection_start_y;
+    }
+    else {
+        *sx = tv->selection_start_x;
+        *sy = tv->selection_start_y;
+        *ex = tv->selection_end_x;
+        *ey = tv->selection_end_y;
+    }
+}
+
+
+static int get_string_idx_from_pixel_offset(char const *s, int target_pixel_offset) {
+    int pixel_offset = 0;
+    for (int i = 0; s[i] != '\0'; i++) {
+        pixel_offset += GetTextWidth(g_defaultFont, s + i, 1);
+        if (pixel_offset > target_pixel_offset) {
+            return i;
+        }
+    }
+
+    return 0;
+}
+
+
 void text_view_do(DfWindow *win, text_view_t *tv, int x, int y, int w, int h) {
     int mouse_in_bounds = is_mouse_in_bounds(win, x, y, w, h);
     draw_sunken_box(win->bmp, x, y, w, h);
@@ -399,7 +441,7 @@ void text_view_do(DfWindow *win, text_view_t *tv, int x, int y, int w, int h) {
 
     int textRight = scrollbar_x;
     int space_pixels = GetTextWidth(g_defaultFont, " ");
-    char const *c = tv->wrapped_text;
+    char const *line = tv->wrapped_text;
 
     int total_pixel_height = text_view_wrap_text(tv, w - scrollbar_w);
 
@@ -409,13 +451,49 @@ void text_view_do(DfWindow *win, text_view_t *tv, int x, int y, int w, int h) {
         tv->v_scrollbar.maximum = scrollbar_h;
     v_scrollbar_do(win, &tv->v_scrollbar, scrollbar_x, scrollbar_y, scrollbar_w, scrollbar_h, mouse_in_bounds);
 
+    int sel_start_x, sel_start_y, sel_end_x, sel_end_y;
+    get_selection_coords(tv, &sel_start_x, &sel_start_y, &sel_end_x, &sel_end_y);
+
     y -= tv->v_scrollbar.current_val;
-    while (1) {
-        char const *end_of_line = strchr(c, '\n');
+    for (int line_num = 0; ; line_num++) {
+        // Update selection block if mouse click on current line.
+        if (mouse_in_bounds) {
+            if (win->input.mouseY >= y && win->input.mouseY < (y + g_defaultFont->charHeight)) {
+                if (win->input.lmbClicked) {
+                    int pixel_offset = win->input.mouseX - x;
+                    tv->selection_start_x = get_string_idx_from_pixel_offset(line, pixel_offset);
+                    tv->selection_start_y = line_num;
+                }
+
+                if (win->input.lmb) {
+                    int pixel_offset = win->input.mouseX - x;
+                    tv->selection_end_x = get_string_idx_from_pixel_offset(line, pixel_offset);
+                    tv->selection_end_y = line_num;
+                }
+            }
+        }
+
+        char const *end_of_line = strchr(line, '\n');
         if (!end_of_line) break;
+        int line_len = end_of_line - line - 1;
+
+        // Draw selection block
+        if (line_num >= sel_start_y && line_num <= sel_end_y) {
+            int start_idx = 0;
+            int end_idx = line_len;
+            if (line_num == sel_start_y)
+                start_idx = sel_start_x;
+            if (line_num == sel_end_y && (sel_end_x + 1) < line_len)
+                end_idx = sel_end_x + 1;
+
+            int sel_x = x + GetTextWidth(g_defaultFont, line, start_idx);
+            int sel_w = GetTextWidth(g_defaultFont, line + start_idx, end_idx - start_idx);
+            RectFill(win->bmp, sel_x, y, sel_w, g_defaultFont->charHeight, g_selectionColour);
+        }
+
         DrawTextSimpleLen(g_defaultFont, g_normalTextColour, win->bmp,
-            x, y, c, end_of_line - c);
-        c = end_of_line + 1;
+            x, y, line, line_len);
+        line = end_of_line + 1;
         y += g_defaultFont->charHeight;
     }
 
