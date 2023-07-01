@@ -16,7 +16,7 @@
 typedef struct {
     // A table that maps words to definition indices. This is needed
     // to allow multiple words to map to the same definition. eg 
-    // "tenth" and "10th" map to the defintion for "tenth". TODO: Make
+    // "tenth" and "10th" map to the definition for "tenth". TODO: Make
 	// it so that words defined in "defs" don't appear in this list -
 	// only the _extra_ mappings need to be stored here.
     char **words;   // Array items are like <word>\0<index>[:<index>]...\n

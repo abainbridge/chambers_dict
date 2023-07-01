@@ -101,7 +101,9 @@ static void draw_frame() {
     }
 
     list_view_do(g_win, &g_list_view, spacer, views_y, list_view_width, views_height);
-    char const *selected_word = g_list_view.items[g_list_view.selected_item];
+    char const *selected_word = "";
+    if (g_list_view.selected_item >= 0)
+        selected_word = g_list_view.items[g_list_view.selected_item];
     if (selected_word != g_current_word) {
         text_view_empty(&g_text_view);
 
