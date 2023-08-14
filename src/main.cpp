@@ -134,6 +134,8 @@ void main() {
     g_win = CreateWin(800, 600, WT_WINDOWED_RESIZEABLE, APPLICATION_NAME);
     RegisterRedrawCallback(g_win, draw_frame);
     SetWindowIcon(g_win);
+    BitmapClear(g_win->bmp, g_frameColour);
+    UpdateWin(g_win);
 
     if (!dict_load(&g_dict, "data/dict.txt")) 
         ReleaseAssert(0, "Couldn't open dict.txt");
