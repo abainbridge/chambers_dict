@@ -16,7 +16,6 @@
 
 static const char APPLICATION_NAME[] = "21st Century Dictionary";
 
-static DfWindow *g_win;
 static dict_t g_dict;
 static DfEditBox g_edit_box = { 0 };
 static DfButton g_help_button = { "Help" };
@@ -68,39 +67,40 @@ static void populate_list_view(DfListView *lv, dict_t *dict, char const *filter)
 }
 
 static void draw_frame() {
-    DfGuiDoFrame(g_win);
+    DfWindow *win = g_window;
+    DfGuiDoFrame(win);
 
     int spacer = 7 * g_drawScale;
     int edit_box_y = spacer;
     int edit_box_height = g_defaultFont->charHeight + 8 * g_drawScale;
     int help_button_w = 60 * g_drawScale;
     int help_button_h = edit_box_height;
-    int help_button_x = g_win->bmp->width - help_button_w - spacer;
+    int help_button_x = win->bmp->width - help_button_w - spacer;
     int help_button_y = edit_box_y;
-    int text_view_x = g_win->bmp->width * 0.3;
+    int text_view_x = win->bmp->width * 0.3;
     int views_y = edit_box_y + edit_box_height + spacer;
-    int text_view_width = g_win->bmp->width - text_view_x - spacer;
-    int views_height = g_win->bmp->height - views_y - spacer;
+    int text_view_width = win->bmp->width - text_view_x - spacer;
+    int views_height = win->bmp->height - views_y - spacer;
     int list_view_width = text_view_x - spacer * 2;
     int v_scrollbar_width = spacer * 2;
     int text_view_scrollbar_x = text_view_x + text_view_width - v_scrollbar_width;
 
-    RectFill(g_win->bmp, 0, 0, g_win->bmp->width, views_y, g_frameColour);
-    RectFill(g_win->bmp, 0, g_win->bmp->height - spacer, g_win->bmp->width, spacer, g_frameColour);
-    RectFill(g_win->bmp, 0, 0, spacer, g_win->bmp->height, g_frameColour);
-    RectFill(g_win->bmp, g_win->bmp->width - spacer, 0, spacer, g_win->bmp->height, g_frameColour);
-    RectFill(g_win->bmp, text_view_x - spacer, 0, spacer, g_win->bmp->height, g_frameColour);
+    RectFill(win->bmp, 0, 0, win->bmp->width, views_y, g_frameColour);
+    RectFill(win->bmp, 0, win->bmp->height - spacer, win->bmp->width, spacer, g_frameColour);
+    RectFill(win->bmp, 0, 0, spacer, win->bmp->height, g_frameColour);
+    RectFill(win->bmp, win->bmp->width - spacer, 0, spacer, win->bmp->height, g_frameColour);
+    RectFill(win->bmp, text_view_x - spacer, 0, spacer, win->bmp->height, g_frameColour);
 
-    if (DfEditBoxDo(g_win, &g_edit_box, spacer, edit_box_y, list_view_width, edit_box_height))
+    if (DfEditBoxDo(win, &g_edit_box, spacer, edit_box_y, list_view_width, edit_box_height))
         populate_list_view(&g_list_view, &g_dict, g_edit_box.text);
 
-    if (DfButtonDo(g_win, &g_help_button, help_button_x, help_button_y,
+    if (DfButtonDo(win, &g_help_button, help_button_x, help_button_y,
         help_button_w, help_button_h)) {
         strcpy(g_edit_box.text, "help text");
         populate_list_view(&g_list_view, &g_dict, g_edit_box.text);
     }
 
-    DfListViewDo(g_win, &g_list_view, spacer, views_y, list_view_width, views_height);
+    DfListViewDo(win, &g_list_view, spacer, views_y, list_view_width, views_height);
     char const *selected_word = "";
     if (g_list_view.selectedItem >= 0)
         selected_word = g_list_view.items[g_list_view.selectedItem];
@@ -117,9 +117,9 @@ static void draw_frame() {
         g_current_word = selected_word;
     }
 
-    DfTextViewDo(g_win, &g_text_view, text_view_x, views_y, text_view_width, views_height);
+    DfTextViewDo(win, &g_text_view, text_view_x, views_y, text_view_width, views_height);
 
-    if (g_win->input.keyDowns[KEY_C] && g_win->input.keys[KEY_CONTROL]) {
+    if (win->input.keyDowns[KEY_C] && win->input.keys[KEY_CONTROL]) {
         int num_chars;
         char const *selected_text = DfTextViewGetSelectedText(&g_text_view, &num_chars);
         if (selected_text) {
@@ -127,15 +127,15 @@ static void draw_frame() {
         }
     }
     
-    UpdateWin(g_win);
+    UpdateWin(win);
 }
 
 void main() {
-    g_win = CreateWin(800, 600, WT_WINDOWED_RESIZEABLE, APPLICATION_NAME);
-    RegisterRedrawCallback(g_win, draw_frame);
-    SetWindowIcon(g_win);
-    BitmapClear(g_win->bmp, g_frameColour);
-    UpdateWin(g_win);
+    g_window = CreateWin(800, 600, WT_WINDOWED_RESIZEABLE, APPLICATION_NAME);
+    RegisterRedrawCallback(g_window, draw_frame);
+    SetWindowIcon(g_window);
+    BitmapClear(g_window->bmp, g_frameColour);
+    UpdateWin(g_window);
 
     if (!dict_load(&g_dict, "data/dict.txt")) 
         ReleaseAssert(0, "Couldn't open dict.txt");
@@ -151,13 +151,13 @@ void main() {
     // Main loop
 
     double next_force_frame_time = GetRealTime() + 0.2;
-    while (!g_win->windowClosed && !g_win->input.keyDowns[KEY_ESC]) {
+    while (!g_window->windowClosed && !g_window->input.keyDowns[KEY_ESC]) {
         bool force_frame = GetRealTime() > next_force_frame_time;
         if (force_frame) {
             next_force_frame_time = GetRealTime() + 0.2;
         }
 
-        if (InputPoll(g_win) || force_frame) {
+        if (InputPoll(g_window) || force_frame) {
             draw_frame();
         }
          
