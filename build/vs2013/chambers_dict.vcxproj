@@ -111,13 +111,13 @@
     <ClCompile Include="..\..\..\deadfrog-lib\src\df_colour.cpp" />
     <ClCompile Include="..\..\..\deadfrog-lib\src\df_common.cpp" />
     <ClCompile Include="..\..\..\deadfrog-lib\src\df_font.cpp" />
+    <ClCompile Include="..\..\..\deadfrog-lib\src\df_gui.cpp" />
     <ClCompile Include="..\..\..\deadfrog-lib\src\df_message_dialog.cpp" />
     <ClCompile Include="..\..\..\deadfrog-lib\src\df_polygon_aa.cpp" />
     <ClCompile Include="..\..\..\deadfrog-lib\src\df_time.cpp" />
     <ClCompile Include="..\..\..\deadfrog-lib\src\df_window.cpp" />
     <ClCompile Include="..\..\..\deadfrog-lib\src\fonts\df_prop.cpp" />
     <ClCompile Include="..\..\src\dict.cpp" />
-    <ClCompile Include="..\..\src\gui.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -126,13 +126,13 @@
     <ClInclude Include="..\..\..\deadfrog-lib\src\df_colour.h" />
     <ClInclude Include="..\..\..\deadfrog-lib\src\df_common.h" />
     <ClInclude Include="..\..\..\deadfrog-lib\src\df_font.h" />
+    <ClInclude Include="..\..\..\deadfrog-lib\src\df_gui.h" />
     <ClInclude Include="..\..\..\deadfrog-lib\src\df_message_dialog.h" />
     <ClInclude Include="..\..\..\deadfrog-lib\src\df_polygon_aa.h" />
     <ClInclude Include="..\..\..\deadfrog-lib\src\df_time.h" />
     <ClInclude Include="..\..\..\deadfrog-lib\src\df_window.h" />
     <ClInclude Include="..\..\..\deadfrog-lib\src\fonts\df_prop.h" />
     <ClInclude Include="..\..\src\dict.h" />
-    <ClInclude Include="..\..\src\gui.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\icon\21st.rc" />
