@@ -31,6 +31,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -72,7 +73,7 @@
       <Optimization>MinSpace</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../../deadfrog-lib/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../deadfrog-lib/src;../../../vs_libc_replacement/src</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4244;4996</DisableSpecificWarnings>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
@@ -87,6 +88,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <EnableEnhancedInstructionSet>NoExtensions</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -95,8 +97,11 @@
       <OptimizeReferences>true</OptimizeReferences>
       <OutputFile>$(ProjectDir)/../../$(TargetName)$(TargetExt)</OutputFile>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>msvcrt.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;shell32.lib</AdditionalDependencies>
+      <GenerateMapFile>true</GenerateMapFile>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <EntryPointSymbol>premain</EntryPointSymbol>
     </Link>
     <PostBuildEvent>
       <Command>..\..\filesize.bat $(TargetPath)</Command>
@@ -115,8 +120,20 @@
     <ClCompile Include="..\..\..\deadfrog-lib\src\df_message_dialog.cpp" />
     <ClCompile Include="..\..\..\deadfrog-lib\src\df_polygon_aa.cpp" />
     <ClCompile Include="..\..\..\deadfrog-lib\src\df_time.cpp" />
-    <ClCompile Include="..\..\..\deadfrog-lib\src\df_window.cpp" />
+    <ClCompile Include="..\..\..\deadfrog-lib\src\df_window.cpp">
+      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AssemblyCode</AssemblerOutput>
+    </ClCompile>
     <ClCompile Include="..\..\..\deadfrog-lib\src\fonts\df_prop.cpp" />
+    <ClCompile Include="..\..\..\vs_libc_replacement\src\assert.c" />
+    <ClCompile Include="..\..\..\vs_libc_replacement\src\cpp_support.cpp" />
+    <ClCompile Include="..\..\..\vs_libc_replacement\src\ctype.c" />
+    <ClCompile Include="..\..\..\vs_libc_replacement\src\file.c" />
+    <ClCompile Include="..\..\..\vs_libc_replacement\src\math.c" />
+    <ClCompile Include="..\..\..\vs_libc_replacement\src\misc.c" />
+    <ClCompile Include="..\..\..\vs_libc_replacement\src\stdlib.c" />
+    <ClCompile Include="..\..\..\vs_libc_replacement\src\string.c">
+      <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</WholeProgramOptimization>
+    </ClCompile>
     <ClCompile Include="..\..\src\dict.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
   </ItemGroup>
@@ -132,6 +149,13 @@
     <ClInclude Include="..\..\..\deadfrog-lib\src\df_time.h" />
     <ClInclude Include="..\..\..\deadfrog-lib\src\df_window.h" />
     <ClInclude Include="..\..\..\deadfrog-lib\src\fonts\df_prop.h" />
+    <ClInclude Include="..\..\..\vs_libc_replacement\src\assert.h" />
+    <ClInclude Include="..\..\..\vs_libc_replacement\src\ctype.h" />
+    <ClInclude Include="..\..\..\vs_libc_replacement\src\stdio.h" />
+    <ClInclude Include="..\..\..\vs_libc_replacement\src\stdlib.h" />
+    <ClInclude Include="..\..\..\vs_libc_replacement\src\stdlib_common.h" />
+    <ClInclude Include="..\..\..\vs_libc_replacement\src\string.h" />
+    <ClInclude Include="..\..\..\vs_libc_replacement\src\windows.h" />
     <ClInclude Include="..\..\src\dict.h" />
   </ItemGroup>
   <ItemGroup>
@@ -140,7 +164,13 @@
   <ItemGroup>
     <Image Include="..\..\icon\icon1.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <MASM Include="..\..\..\vs_libc_replacement\src\ftol2.asm">
+      <FileType>Document</FileType>
+    </MASM>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
   </ImportGroup>
 </Project>

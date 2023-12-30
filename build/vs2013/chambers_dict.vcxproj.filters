@@ -36,6 +36,30 @@
     <ClCompile Include="..\..\..\deadfrog-lib\src\df_gui.cpp">
       <Filter>deadfrog-lib</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\vs_libc_replacement\src\string.c">
+      <Filter>libc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\vs_libc_replacement\src\file.c">
+      <Filter>libc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\vs_libc_replacement\src\stdlib.c">
+      <Filter>libc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\vs_libc_replacement\src\ctype.c">
+      <Filter>libc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\vs_libc_replacement\src\misc.c">
+      <Filter>libc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\vs_libc_replacement\src\math.c">
+      <Filter>libc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\vs_libc_replacement\src\assert.c">
+      <Filter>libc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\vs_libc_replacement\src\cpp_support.cpp">
+      <Filter>libc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\deadfrog-lib\src\df_bitmap.h">
@@ -72,6 +96,27 @@
     <ClInclude Include="..\..\..\deadfrog-lib\src\df_gui.h">
       <Filter>deadfrog-lib</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\vs_libc_replacement\src\stdio.h">
+      <Filter>libc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\vs_libc_replacement\src\ctype.h">
+      <Filter>libc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\vs_libc_replacement\src\string.h">
+      <Filter>libc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\vs_libc_replacement\src\stdlib.h">
+      <Filter>libc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\vs_libc_replacement\src\stdlib_common.h">
+      <Filter>libc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\vs_libc_replacement\src\windows.h">
+      <Filter>libc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\vs_libc_replacement\src\assert.h">
+      <Filter>libc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="deadfrog-lib">
@@ -83,6 +128,9 @@
     <Filter Include="icon">
       <UniqueIdentifier>{4bc54594-6c9d-4f43-aa84-7326dc0161a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="libc">
+      <UniqueIdentifier>{6c9506a2-0c89-4454-8b44-befda606950a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\icon\21st.rc">
@@ -93,5 +141,10 @@
     <Image Include="..\..\icon\icon1.ico">
       <Filter>icon</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="..\..\..\vs_libc_replacement\src\ftol2.asm">
+      <Filter>libc</Filter>
+    </MASM>
   </ItemGroup>
 </Project>

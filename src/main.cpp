@@ -130,7 +130,7 @@ static void draw_frame() {
     UpdateWin(win);
 }
 
-void main() {
+int main() {
     g_window = CreateWin(800, 600, WT_WINDOWED_RESIZEABLE, APPLICATION_NAME);
     RegisterRedrawCallback(g_window, draw_frame);
     SetWindowIcon(g_window);
@@ -168,8 +168,8 @@ void main() {
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-int WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE /*_hPrevInstance*/,
-    LPSTR cmdLine, int /*_iCmdShow*/) {
+extern "C" int WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE /*_hPrevInstance*/,
+    char *cmdLine, int /*_iCmdShow*/) {
     main();
     return 0;
 }
