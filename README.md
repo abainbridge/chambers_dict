@@ -9,8 +9,5 @@ Alternative GUI for the Chambers 21st Century Dictionary
 
 Depends on https://github.com/abainbridge/deadfrog-lib
 
-The Visual Studio build uses a trick to reduce executable size by
-linking against a version of msvcrt.dll that ships with every version
-of Windows since 95. This means we can dynamically link without having
-to force the user to install a "Visual C++ Redistributable Package".
-Instructions on how this works: https://stackoverflow.com/a/39737730/66088
+The Visual Studio build uses a cut-down libc/crt and win32 headers in order
+to reduce executable size. https://github.com/abainbridge/vs_libc_replacement
