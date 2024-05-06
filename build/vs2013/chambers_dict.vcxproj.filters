@@ -117,6 +117,18 @@
     <ClInclude Include="..\..\..\vs_libc_replacement\src\assert.h">
       <Filter>libc</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\vs_libc_replacement\src\shellapi.h">
+      <Filter>libc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\vs_libc_replacement\src\ShellScalingApi.h">
+      <Filter>libc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\vs_libc_replacement\src\winuser.h">
+      <Filter>libc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\vs_libc_replacement\src\dwmapi.h">
+      <Filter>libc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="deadfrog-lib">

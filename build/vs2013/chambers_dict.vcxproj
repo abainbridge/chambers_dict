@@ -98,7 +98,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <OutputFile>$(ProjectDir)/../../$(TargetName)$(TargetExt)</OutputFile>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;Shcore.lib;shell32.lib</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;Shcore.lib;shell32.lib;dwmapi.lib</AdditionalDependencies>
       <GenerateMapFile>true</GenerateMapFile>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
@@ -152,11 +152,15 @@
     <ClInclude Include="..\..\..\deadfrog-lib\src\fonts\df_prop.h" />
     <ClInclude Include="..\..\..\vs_libc_replacement\src\assert.h" />
     <ClInclude Include="..\..\..\vs_libc_replacement\src\ctype.h" />
+    <ClInclude Include="..\..\..\vs_libc_replacement\src\dwmapi.h" />
+    <ClInclude Include="..\..\..\vs_libc_replacement\src\shellapi.h" />
+    <ClInclude Include="..\..\..\vs_libc_replacement\src\ShellScalingApi.h" />
     <ClInclude Include="..\..\..\vs_libc_replacement\src\stdio.h" />
     <ClInclude Include="..\..\..\vs_libc_replacement\src\stdlib.h" />
     <ClInclude Include="..\..\..\vs_libc_replacement\src\stdlib_common.h" />
     <ClInclude Include="..\..\..\vs_libc_replacement\src\string.h" />
     <ClInclude Include="..\..\..\vs_libc_replacement\src\windows.h" />
+    <ClInclude Include="..\..\..\vs_libc_replacement\src\winuser.h" />
     <ClInclude Include="..\..\src\dict.h" />
   </ItemGroup>
   <ItemGroup>
