@@ -44,6 +44,11 @@ int dict_load(dict_t *dict, char const *filename) {
         c++;
     }
 
+    // Check that we've found the first line of the words table, which, unfortunately
+    // contains non-ASCII.
+    if (strncmp(c, "\xef\xbf\xbd:0\n", 6) != 0)
+        return 0;
+
     // Count words.
     dict->num_words = 0;
     for (unsigned i = c - g_dictFile; i < g_dictFileNumBytes; i++) {
@@ -61,6 +66,8 @@ int dict_load(dict_t *dict, char const *filename) {
         // Swap the first colon for a NULL char so we can use words[x] as a
         // NULL terminated string.
         c = strchr(c, ':');
+        if (!c)
+            return 0;
         *c = '\0';
 
         c = strchr(c + 1, '\n') + 1;

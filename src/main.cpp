@@ -138,7 +138,7 @@ int main() {
     UpdateWin(g_window);
 
     if (!dict_load(&g_dict, "data/dict.txt")) 
-        ReleaseAssert(0, "Couldn't open dict.txt");
+        ReleaseAssert(0, "Couldn't open dict.txt, or file corrupt");
 
     //
     // Init GUI widgets
