@@ -46,7 +46,7 @@ int dict_load(dict_t *dict, char const *filename) {
 
     // Check that we've found the first line of the words table, which, unfortunately
     // contains non-ASCII.
-    if (strncmp(c, "\xef\xbf\xbd:0\n", 6) != 0)
+    if (strncmp(c, "¢:0\n", 4) != 0)
         return 0;
 
     // Count words.
